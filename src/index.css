@@ -1,0 +1,178 @@
+:root {
+  --primary: #65bd4a;
+  --primary-hover: #54a03e;
+  --bg-dark: #ffffff;
+  --bg-card: #ffffff;
+  --text-light: #0f172a;
+  --text-dim: #64748b;
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+
+/* Utilities */
+.container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.card {
+  background: var(--bg-card);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.input-group {
+  margin-bottom: 1rem;
+}
+
+.input-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-dim);
+  font-size: 0.875rem;
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  background: #f1f5f9;
+  border: 1px solid var(--glass-border);
+  color: var(--text-light);
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.input-field:focus {
+  border-color: var(--primary);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-card);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-dim);
+}
+
+/* Status Colors - Manual Definitions for Tailwind classes */
+.text-yellow-400 {
+  color: #facc15;
+}
+
+.bg-yellow-400\/10 {
+  background-color: rgba(250, 204, 21, 0.1);
+}
+
+.text-green-400 {
+  color: #4ade80;
+}
+
+.bg-green-400\/10 {
+  background-color: rgba(74, 222, 128, 0.1);
+}
+
+.text-red-400 {
+  color: #f87171;
+}
+
+.bg-red-400\/10 {
+  background-color: rgba(248, 113, 113, 0.1);
+}
+
+.text-blue-400 {
+  color: #60a5fa;
+}
+
+.bg-blue-400\/10 {
+  background-color: rgba(96, 165, 250, 0.1);
+}
+
+.text-gray-400 {
+  color: #9ca3af;
+}
+
+.bg-gray-400\/10 {
+  background-color: rgba(156, 163, 175, 0.1);
+}
+
+.text-indigo-400 {
+  color: #818cf8;
+}
+
+.bg-indigo-400\/10 {
+  background-color: rgba(129, 140, 248, 0.1);
+}
+
+.text-purple-400 {
+  color: #c084fc;
+}
+
+.bg-purple-400\/10 {
+  background-color: rgba(192, 132, 252, 0.1);
+}
+
+.bg-gray-900 {
+  background-color: #111827;
+}

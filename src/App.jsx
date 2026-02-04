@@ -4,6 +4,7 @@ import AuthContext from './context/AuthContext';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import NotFound from './pages/NotFound';
 
 import OrderEntry from './pages/OrderEntry';
 import Orders from './pages/Orders';
@@ -43,6 +44,8 @@ function App() {
         <Route path="products" element={<Products />} />
         <Route path="reports" element={<Reports />} />
       </Route>
+
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

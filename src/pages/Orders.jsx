@@ -10,6 +10,7 @@ const Orders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
 
     const fetchOrders = async () => {
         try {
@@ -125,8 +126,8 @@ const Orders = () => {
     };
 
     const handleDelete = async (id) => {
-        if (user?.role !== 'Super Admin') {
-            alert('Only Super Admin can delete orders.');
+        if (user?.role !== 'Super Admin' && user?.role !== 'Admin') {
+            alert('Only Admin or Super Admin can delete orders.');
             return;
         }
 
@@ -240,7 +241,14 @@ const Orders = () => {
                                         )}
                                     </td>
                                     <td style={{ padding: '1rem' }}>
-                                        <div style={{ fontWeight: 'bold' }}>{order.customer?.name || 'Unknown'}</div>
+                                        <div
+                                            onClick={() => setSelectedCustomer(order.customer)}
+                                            style={{ fontWeight: 'bold', cursor: 'pointer', color: 'var(--primary)', textDecoration: 'none' }}
+                                            className="customer-name-link"
+                                            title="Click to view details"
+                                        >
+                                            {order.customer?.name || 'Unknown'}
+                                        </div>
                                         <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>{order.customer?.phone}</div>
                                         {order.customer?.phone2 && (
                                             <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Alt: {order.customer?.phone2}</div>
@@ -352,7 +360,7 @@ const Orders = () => {
                                                     >
                                                         <Edit size={18} />
                                                     </button>
-                                                    {user?.role === 'Super Admin' && (
+                                                    {(user?.role === 'Super Admin' || user?.role === 'Admin') && (
                                                         <button
                                                             onClick={() => handleDelete(order._id)}
                                                             className="btn"
@@ -382,6 +390,99 @@ const Orders = () => {
                     </table>
                 </div>
             </div>
+            {/* Customer Details Popup */}
+            {selectedCustomer && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        background: 'rgba(0,0,0,0.6)',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        zIndex: 1000,
+                        backdropFilter: 'blur(4px)'
+                    }}
+                    onClick={() => setSelectedCustomer(null)}
+                >
+                    <div
+                        className="card glass"
+                        style={{
+                            width: '450px',
+                            maxHeight: '90vh',
+                            overflowY: 'auto',
+                            padding: '2rem',
+                            position: 'relative',
+                            border: '1px solid var(--primary)'
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                            <h2 style={{ margin: 0, color: 'var(--primary)' }}>Customer Details</h2>
+                            <button
+                                onClick={() => setSelectedCustomer(null)}
+                                style={{ background: 'transparent', color: 'var(--text-dim)', fontSize: '1.5rem', lineHeight: 1 }}
+                            >
+                                &times;
+                            </button>
+                        </div>
+
+                        <div style={{ display: 'grid', gap: '1rem' }}>
+                            <div className="detail-item">
+                                <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-dim)', marginBottom: '0.25rem' }}>Full Name</label>
+                                <div style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{selectedCustomer.name}</div>
+                            </div>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                <div className="detail-item">
+                                    <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-dim)', marginBottom: '0.25rem' }}>Phone</label>
+                                    <div>{selectedCustomer.phone}</div>
+                                </div>
+                                {selectedCustomer.phone2 && (
+                                    <div className="detail-item">
+                                        <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-dim)', marginBottom: '0.25rem' }}>Phone 2 (Alt)</label>
+                                        <div>{selectedCustomer.phone2}</div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="detail-item">
+                                <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-dim)', marginBottom: '0.25rem' }}>Address</label>
+                                <div style={{ lineHeight: '1.4' }}>{selectedCustomer.address || 'No address provided'}</div>
+                            </div>
+
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                                <div className="detail-item">
+                                    <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-dim)', marginBottom: '0.25rem' }}>City</label>
+                                    <div>{selectedCustomer.city || 'N/A'}</div>
+                                </div>
+                                <div className="detail-item">
+                                    <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-dim)', marginBottom: '0.25rem' }}>Country</label>
+                                    <div>{selectedCustomer.country || 'Sri Lanka'}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button
+                            className="btn btn-primary"
+                            style={{ width: '100%', marginTop: '2rem' }}
+                            onClick={() => setSelectedCustomer(null)}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            <style>{`
+                .customer-name-link:hover {
+                    text-decoration: underline !important;
+                    color: var(--primary-light) !important;
+                }
+            `}</style>
         </div>
     );
 };

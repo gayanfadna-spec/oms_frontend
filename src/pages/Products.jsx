@@ -29,7 +29,7 @@ const Products = () => {
     const fetchProducts = async () => {
         try {
             setLoading(true);
-            const { data } = await api.get('/products');
+            const { data } = await api.get('/products?all=true');
             setProducts(data);
         } catch (err) {
             console.error("Failed to fetch products", err);
@@ -72,10 +72,11 @@ const Products = () => {
         setFormSuccess('');
     };
 
-    const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this product?')) return;
+    const handleHardDelete = async (id) => {
+        if (!window.confirm('WARNING: Are you sure you want to PERMANENTLY delete this product? This action cannot be undone.')) return;
         try {
             await api.delete(`/products/${id}`);
+            setShowForm(false);
             fetchProducts();
         } catch (err) {
             alert(err.response?.data?.message || 'Failed to delete product');
@@ -182,6 +183,19 @@ const Products = () => {
                             <label htmlFor="active" style={{ cursor: 'pointer' }}>Available (Active)</label>
                         </div>
 
+                        {editMode && (
+                            <div style={{ gridColumn: 'span 2', marginTop: '1rem', borderTop: '1px solid var(--glass-border)', paddingTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
+                                <button
+                                    type="button"
+                                    onClick={() => handleHardDelete(editId)}
+                                    className="btn"
+                                    style={{ background: 'rgba(239, 68, 68, 0.1)', color: 'var(--danger)', fontSize: '0.875rem' }}
+                                >
+                                    <Trash2 size={16} style={{ marginRight: '0.5rem' }} /> Permanently Delete Product
+                                </button>
+                            </div>
+                        )}
+
                         <div style={{ gridColumn: 'span 2' }}>
                             <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
                                 <Save size={18} style={{ marginRight: '0.5rem' }} /> {editMode ? 'Update Product' : 'Create Product'}
@@ -215,7 +229,10 @@ const Products = () => {
                                 </tr>
                             ) : (
                                 filteredProducts.map(product => (
-                                    <tr key={product._id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
+                                    <tr key={product._id} style={{
+                                        borderBottom: '1px solid var(--glass-border)',
+                                        background: !product.active ? 'rgba(239, 68, 68, 0.05)' : 'transparent'
+                                    }}>
                                         <td style={{ padding: '1rem' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                                                 <div style={{ padding: '0.5rem', background: 'var(--bg-dark)', borderRadius: '0.5rem' }}>
@@ -243,9 +260,6 @@ const Products = () => {
                                                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                                                     <button onClick={() => handleEditClick(product)} className="btn" style={{ padding: '0.25rem', color: 'var(--text-main)', background: 'transparent' }} title="Edit">
                                                         <Edit size={16} />
-                                                    </button>
-                                                    <button onClick={() => handleDelete(product._id)} className="btn" style={{ padding: '0.25rem', color: 'var(--danger)', background: 'transparent' }} title="Delete">
-                                                        <Trash2 size={16} />
                                                     </button>
                                                 </div>
                                             </td>

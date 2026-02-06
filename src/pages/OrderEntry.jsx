@@ -36,7 +36,7 @@ const OrderEntry = () => {
     useEffect(() => {
         if (!isManualDelivery && !id) {
             const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-            const isFreeDeliveryItem = items.length === 1 && items[0].productName === "Moist Curl Leave On Conditioner";
+            const isFreeDeliveryItem = items.length === 1 && items[0].productName === "moist curl";
 
             if (isFreeDeliveryItem) {
                 setDeliveryCharge(0);

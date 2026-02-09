@@ -99,7 +99,7 @@ const Reports = () => {
                 const totalQty = order.items.reduce((sum, item) => sum + item.quantity, 0);
 
                 const row = [
-                    new Date(order.createdAt).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }),
+                    `"${new Date(order.createdAt).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })}"`,
                     `"${productNames.replace(/"/g, '""')}"`,
                     `"${(order.remark || '').replace(/"/g, '""')}"`,
                     order.discountAmount || 0,

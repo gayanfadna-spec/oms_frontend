@@ -34,17 +34,17 @@ const OrderEntry = () => {
 
     // Auto-calculate delivery charge
     useEffect(() => {
-        if (!isManualDelivery && !id) {
+        if (!isManualDelivery) {
             const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-            const isFreeDeliveryItem = items.length === 1 && items[0].productName === "moist curl";
+            const hasFreeDeliveryItem = items.some(item => item.productName === "moist curl");
 
-            if (isFreeDeliveryItem) {
+            if (hasFreeDeliveryItem) {
                 setDeliveryCharge(0);
             } else {
                 setDeliveryCharge((subtotal < 2500 && subtotal > 0) ? 350 : 0);
             }
         }
-    }, [items, isManualDelivery, id]);
+    }, [items, isManualDelivery]);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -102,6 +102,7 @@ const OrderEntry = () => {
                     }
 
                     setRemark(data.remark || '');
+                    setAdditionalRemark(data.additionalRemark || '');
                 } catch (err) {
                     setError('Failed to load order details');
                     console.error(err);
@@ -224,7 +225,7 @@ const OrderEntry = () => {
                         // Update it with the new form details
                         await api.put(`/customers/${existingCust._id}`, {
                             ...customerForm,
-                            // phone is immutable
+                            phone
                         });
                         customerId = existingCust._id;
                     } else {
@@ -235,7 +236,7 @@ const OrderEntry = () => {
                 // We have a loaded customer, update them
                 await api.put(`/customers/${customer._id}`, {
                     ...customerForm,
-                    // Phone is immutable here since it's the lookup key
+                    phone
                 });
                 customerId = customer._id;
             }
@@ -303,8 +304,7 @@ const OrderEntry = () => {
                         <input
                             className="input-field"
                             value={phone}
-                            disabled // Primary contact is the search key
-                            style={{ opacity: 0.7, cursor: 'not-allowed' }}
+                            onChange={e => setPhone(e.target.value)}
                         />
                     </div>
                     <div className="input-group">

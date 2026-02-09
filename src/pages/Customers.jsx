@@ -112,7 +112,7 @@ const Customers = () => {
                                         `"${c.city || ''}"`,
                                         `"${c.country || ''}"`,
                                         `"${c.email || ''}"`,
-                                        new Date(c.createdAt).toLocaleDateString()
+                                        new Date(c.createdAt).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })
                                     ];
                                     csvRows.push(row.join(','));
                                 });
@@ -197,7 +197,7 @@ const Customers = () => {
                                         )}
                                     </td>
                                     <td style={{ padding: '1rem', fontSize: '0.875rem', color: 'var(--text-dim)' }}>
-                                        {new Date(customer.createdAt).toLocaleDateString()}
+                                        {new Date(customer.createdAt).toLocaleString('en-GB', { hour12: false })}
                                     </td>
                                     {user?.role === 'Super Admin' && (
                                         <td style={{ padding: '1rem' }}>

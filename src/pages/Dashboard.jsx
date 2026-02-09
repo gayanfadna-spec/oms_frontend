@@ -84,7 +84,7 @@ const Dashboard = () => {
                 <div className="card glass" style={{ marginTop: '2rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                         <h3 style={{ margin: 0 }}>Agent-wise Product Order Count (Today)</h3>
-                        <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Updated: {new Date().toLocaleDateString()}</span>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Updated: {new Date().toLocaleString('en-GB', { hour12: false })}</span>
                     </div>
                     <div style={{ overflowX: 'auto' }}>
                         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '800px' }}>

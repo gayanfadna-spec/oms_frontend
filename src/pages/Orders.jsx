@@ -309,7 +309,7 @@ const Orders = () => {
                                     </td>
                                     <td style={{ padding: '1rem', fontSize: '0.875rem' }}>{order.agent?.name}</td>
                                     <td style={{ padding: '1rem', fontSize: '0.875rem', color: 'var(--text-dim)' }}>
-                                        <div>{new Date(order.createdAt).toLocaleString()}</div>
+                                        <div>{new Date(order.createdAt).toLocaleString('en-GB', { hour12: false })}</div>
                                         {order.editedBy && order.editedBy.length > 0 && (() => {
                                             const lastEdit = order.editedBy[order.editedBy.length - 1];
                                             return (
@@ -319,7 +319,7 @@ const Orders = () => {
                                                         <span>Updated by {lastEdit.agent?.name || 'Unknown'}</span>
                                                     </div>
                                                     <div style={{ marginLeft: '1.25rem', color: 'var(--text-dim)', fontSize: '0.7rem' }}>
-                                                        {new Date(lastEdit.at).toLocaleString()}
+                                                        {new Date(lastEdit.at).toLocaleString('en-GB', { hour12: false })}
                                                     </div>
                                                 </div>
                                             );

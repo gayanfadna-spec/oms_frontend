@@ -82,75 +82,62 @@ const Customers = () => {
 
     return (
         <div className="container">
-            <div className="flex-col-mobile" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <h1 style={{ margin: 0 }}>Customers</h1>
-                <div className="flex-col-mobile w-full-mobile" style={{
-                    display: 'flex',
-                    gap: '1rem'
-                }}>
-                    <div className="input-group" style={{ marginBottom: 0, width: '100%' }}>
-                        <div style={{ position: 'relative', width: '100%' }}>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                    <div className="input-group" style={{ marginBottom: 0 }}>
+                        <div style={{ position: 'relative' }}>
                             <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-dim)' }} />
                             <input
                                 type="text"
                                 className="input-field"
                                 placeholder="Search customers..."
-                                style={{ paddingLeft: '2.5rem', width: '100%' }}
+                                style={{ paddingLeft: '2.5rem', width: '250px' }}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                     </div>
-                    <div className="w-full-mobile" style={{ display: 'flex', gap: '0.5rem' }}>
-                        {user?.role === 'Super Admin' && (
-                            <button
-                                onClick={() => {
-                                    const headers = ['Name', 'Contact 1', 'Contact 2', 'Address', 'City', 'Country', 'Email', 'Joined'];
-                                    const csvRows = [headers.join(',')];
-                                    customers.forEach(c => {
-                                        const row = [
-                                            `"${c.name}"`,
-                                            `"${c.phone}"`,
-                                            `"${c.phone2 || ''}"`,
-                                            `"${c.address}"`,
-                                            `"${c.city || ''}"`,
-                                            `"${c.country || ''}"`,
-                                            `"${c.email || ''}"`,
-                                            `"${new Date(c.createdAt).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })}"`
-                                        ];
-                                        csvRows.push(row.join(','));
-                                    });
-                                    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
-                                    const url = window.URL.createObjectURL(blob);
-                                    const a = document.createElement('a');
-                                    a.href = url;
-                                    a.download = 'customers.csv';
-                                    a.click();
-                                }}
-                                className="btn btn-primary"
-                                style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', flex: 1 }}
-                            >
-                                <Download size={18} /> <span className={window.innerWidth <= 640 ? 'text-xs' : ''}>Export</span>
-                            </button>
-                        )}
-                        {user?.role === 'Super Admin' && (
-                            <button
-                                onClick={handleBulkDelete}
-                                className="btn"
-                                style={{
-                                    background: 'var(--danger)',
-                                    color: 'white',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    gap: '0.5rem',
-                                    flex: 1
-                                }}
-                            >
-                                <Trash2 size={18} /> <span className={window.innerWidth <= 640 ? 'text-xs' : ''}>Clear All</span>
-                            </button>
-                        )}
-                    </div>
+                    {user?.role === 'Super Admin' && (
+                        <button
+                            onClick={() => {
+                                const headers = ['Name', 'Contact 1', 'Contact 2', 'Address', 'City', 'Country', 'Email', 'Joined'];
+                                const csvRows = [headers.join(',')];
+                                customers.forEach(c => {
+                                    const row = [
+                                        `"${c.name}"`,
+                                        `"${c.phone}"`,
+                                        `"${c.phone2 || ''}"`,
+                                        `"${c.address}"`,
+                                        `"${c.city || ''}"`,
+                                        `"${c.country || ''}"`,
+                                        `"${c.email || ''}"`,
+                                        new Date(c.createdAt).toLocaleDateString()
+                                    ];
+                                    csvRows.push(row.join(','));
+                                });
+                                const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+                                const url = window.URL.createObjectURL(blob);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = 'customers.csv';
+                                a.click();
+                            }}
+                            className="btn btn-primary"
+                            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: 0 }}
+                        >
+                            <Download size={18} /> Export CSV
+                        </button>
+                    )}
+                    {user?.role === 'Super Admin' && (
+                        <button
+                            onClick={handleBulkDelete}
+                            className="btn"
+                            style={{ background: 'var(--danger)', color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                        >
+                            <Trash2 size={18} /> Delete All Customers
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -210,7 +197,7 @@ const Customers = () => {
                                         )}
                                     </td>
                                     <td style={{ padding: '1rem', fontSize: '0.875rem', color: 'var(--text-dim)' }}>
-                                        {new Date(customer.createdAt).toLocaleString('en-GB', { hour12: false })}
+                                        {new Date(customer.createdAt).toLocaleDateString()}
                                     </td>
                                     {user?.role === 'Super Admin' && (
                                         <td style={{ padding: '1rem' }}>
@@ -230,7 +217,7 @@ const Customers = () => {
                     </table>
                 </div>
             </div>
-        </div >
+        </div>
     );
 };
 

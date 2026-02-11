@@ -99,7 +99,7 @@ const Reports = () => {
                 const totalQty = order.items.reduce((sum, item) => sum + item.quantity, 0);
 
                 const row = [
-                    `"${new Date(order.createdAt).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })}"`,
+                    new Date(order.createdAt).toLocaleDateString(),
                     `"${productNames.replace(/"/g, '""')}"`,
                     `"${(order.remark || '').replace(/"/g, '""')}"`,
                     order.discountAmount || 0,
@@ -185,11 +185,6 @@ const Reports = () => {
                                 onChange={(e) => setStartDate(e.target.value)}
                             />
                         </div>
-                        {startDate && (
-                            <div style={{ fontSize: '0.75rem', color: 'var(--primary)', marginTop: '0.25rem' }}>
-                                Selected: {new Date(startDate).toLocaleString('en-GB', { hour12: false })}
-                            </div>
-                        )}
                     </div>
                     <div className="input-group" style={{ marginBottom: 0 }}>
                         <label className="input-label">End Date & Time</label>
@@ -203,11 +198,6 @@ const Reports = () => {
                                 onChange={(e) => setEndDate(e.target.value)}
                             />
                         </div>
-                        {endDate && (
-                            <div style={{ fontSize: '0.75rem', color: 'var(--primary)', marginTop: '0.25rem' }}>
-                                Selected: {new Date(endDate).toLocaleString('en-GB', { hour12: false })}
-                            </div>
-                        )}
                     </div>
                     <div className="input-group" style={{ marginBottom: 0 }}>
                         <label className="input-label">Payment Type</label>
@@ -280,7 +270,7 @@ const Reports = () => {
                                 {history.map((log) => (
                                     <tr key={log._id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
                                         <td style={{ padding: '0.75rem', fontSize: '0.875rem' }}>
-                                            {new Date(log.generatedAt).toLocaleString('en-GB', { hour12: false })}
+                                            {new Date(log.generatedAt).toLocaleString()}
                                         </td>
                                         <td style={{ padding: '0.75rem', fontSize: '0.875rem' }}>
                                             {log.generatedBy?.name || 'Unknown'}

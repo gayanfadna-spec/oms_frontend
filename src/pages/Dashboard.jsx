@@ -70,10 +70,10 @@ const Dashboard = () => {
 
             <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                gap: '1rem',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+                gap: '1.5rem',
                 marginBottom: '2rem'
-            }} className="grid-cols-1-mobile">
+            }}>
                 <StatCard title="Total Orders" value={stats.totalOrders} icon={ShoppingCart} color="#65bd4a" />
                 <StatCard title="Today's Revenue" value={`Rs. ${stats.todaysRevenue?.toFixed(2) || '0.00'}`} icon={BadgeDollarSign} color="#10b981" />
                 <StatCard title="Total Customers" value={stats.totalCustomers} icon={Users} color="#f59e0b" />
@@ -84,9 +84,9 @@ const Dashboard = () => {
                 <div className="card glass" style={{ marginTop: '2rem' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
                         <h3 style={{ margin: 0 }}>Agent-wise Product Order Count (Today)</h3>
-                        <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Updated: {new Date().toLocaleString('en-GB', { hour12: false })}</span>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Updated: {new Date().toLocaleDateString()}</span>
                     </div>
-                    <div className="table-container">
+                    <div style={{ overflowX: 'auto' }}>
                         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '800px' }}>
                             <thead>
                                 <tr style={{ borderBottom: '1px solid var(--glass-border)' }}>

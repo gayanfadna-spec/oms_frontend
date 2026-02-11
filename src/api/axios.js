@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_BACKEND_URL || '/api',
+    baseURL: '/api',
 });
 
 api.interceptors.request.use(
@@ -16,4 +16,3 @@ api.interceptors.request.use(
 );
 
 export default api;
-//tgrtgrgtrgr

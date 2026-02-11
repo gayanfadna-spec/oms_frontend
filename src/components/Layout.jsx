@@ -12,28 +12,15 @@ import {
     LogOut,
     Menu,
     UserPlus,
-    AlertTriangle,
-    XCircle
+    AlertTriangle
 } from 'lucide-react';
 import { useState } from 'react';
 
 const Layout = () => {
     const { user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
-    const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
+    const [sidebarOpen, setSidebarOpen] = useState(true);
     const [currentTime, setCurrentTime] = useState(new Date());
-    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-
-    useEffect(() => {
-        const handleResize = () => {
-            const mobile = window.innerWidth <= 768;
-            setIsMobile(mobile);
-            if (mobile) setSidebarOpen(false);
-            else setSidebarOpen(true);
-        };
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -108,52 +95,19 @@ const Layout = () => {
     // ... (rest of the component)
 
     return (
-        <div style={{ display: 'flex', height: '100vh', background: 'var(--bg-dark)', position: 'relative' }}>
-            {/* Mobile Overlay */}
-            {!sidebarOpen && window.innerWidth <= 768 && (
-                <div
-                    onClick={() => setSidebarOpen(false)}
-                    style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        background: 'rgba(0,0,0,0.5)',
-                        zIndex: 40,
-                        backdropFilter: 'blur(2px)'
-                    }}
-                />
-            )}
-
+        <div style={{ display: 'flex', height: '100vh', background: 'var(--bg-dark)' }}>
             {/* Sidebar */}
             <aside style={{
-                position: isMobile ? 'fixed' : 'relative',
-                top: 0,
-                left: 0,
-                bottom: 0,
-                zIndex: 50,
-                height: '100%',
                 width: sidebarOpen ? '260px' : '0px',
                 background: 'var(--bg-card)',
                 borderRight: '1px solid var(--glass-border)',
                 display: 'flex',
                 flexDirection: 'column',
-                transition: 'width 0.3s ease, transform 0.3s ease',
-                padding: sidebarOpen ? '0' : '0',
+                transition: 'width 0.3s ease',
                 overflow: 'hidden',
-                flexShrink: 0,
-                transform: (isMobile && !sidebarOpen) ? 'translateX(-100%)' : 'translateX(0)'
+                flexShrink: 0
             }}>
-                <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                    {isMobile && (
-                        <button
-                            onClick={() => setSidebarOpen(false)}
-                            style={{ position: 'absolute', right: '1rem', top: '1rem', background: 'transparent', color: 'var(--text-dim)' }}
-                        >
-                            <XCircle size={24} />
-                        </button>
-                    )}
+                <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                     <img src="/logo.png" alt="Fadna OMS" style={{ maxWidth: '140px', height: 'auto', marginBottom: '0.5rem' }} />
                     <div style={{ textAlign: 'center', color: 'var(--text-dim)', fontSize: '0.75rem', lineHeight: '1.4' }}>
                         <div>{formatDate(currentTime)}</div>
@@ -161,12 +115,11 @@ const Layout = () => {
                     </div>
                 </div>
 
-                <nav style={{ flex: 1, padding: '1rem', overflowY: 'auto' }}>
+                <nav style={{ flex: 1, padding: '1rem' }}>
                     {navItems.map((item) => (
                         <NavLink
                             key={item.path}
                             to={item.path}
-                            onClick={() => isMobile && setSidebarOpen(false)}
                             style={({ isActive }) => ({
                                 display: 'flex',
                                 alignItems: 'center',
@@ -210,7 +163,7 @@ const Layout = () => {
             </aside>
 
             {/* Main Content */}
-            <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', width: '100%' }}>
+            <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                 {pendingEditsCount > 0 && (
                     <div style={{
                         background: '#ef4444',
@@ -221,11 +174,10 @@ const Layout = () => {
                         justifyContent: 'center',
                         gap: '0.5rem',
                         fontWeight: 'bold',
-                        animation: 'pulse 2s infinite',
-                        fontSize: isMobile ? '0.8rem' : '1rem'
+                        animation: 'pulse 2s infinite'
                     }}>
-                        <AlertTriangle size={isMobile ? 18 : 24} />
-                        <span>{isMobile ? `${pendingEditsCount} Pending Edits` : `URGENT: You have ${pendingEditsCount} pending edit request${pendingEditsCount > 1 ? 's' : ''}. Please check Orders immediately.`}</span>
+                        <AlertTriangle size={24} />
+                        <span>URGENT: You have {pendingEditsCount} pending edit request{pendingEditsCount > 1 ? 's' : ''}. Please check Orders immediately.</span>
                     </div>
                 )}
                 <header style={{
@@ -233,22 +185,14 @@ const Layout = () => {
                     borderBottom: '1px solid var(--glass-border)',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'space-between',
                     padding: '0 1.5rem',
-                    background: 'var(--bg-card)',
-                    zIndex: 30
+                    background: 'var(--bg-card)' // or transparent if we want glass effect on header
                 }}>
-                    <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ background: 'transparent', color: 'var(--text-dim)', padding: '0.5rem' }}>
+                    <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ background: 'transparent', color: 'var(--text-dim)' }}>
                         <Menu size={24} />
                     </button>
-                    {isMobile && (
-                        <div style={{ fontWeight: 'bold', color: 'var(--primary)' }}>Fadna OMS</div>
-                    )}
-                    <div className="hidden-mobile" style={{ fontSize: '0.875rem', color: 'var(--text-dim)' }}>
-                        {user?.name} ({user?.role})
-                    </div>
                 </header>
-                <div style={{ flex: 1, overflow: 'auto', padding: isMobile ? '1rem' : '2rem' }}>
+                <div style={{ flex: 1, overflow: 'auto', padding: '2rem' }}>
                     <Outlet />
                 </div>
             </main>
@@ -256,6 +200,4 @@ const Layout = () => {
     );
 };
 
-
 export default Layout;
-//hhhhgtg

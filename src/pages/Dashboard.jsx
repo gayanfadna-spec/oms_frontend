@@ -70,10 +70,10 @@ const Dashboard = () => {
 
             <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-                gap: '1.5rem',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '1rem',
                 marginBottom: '2rem'
-            }}>
+            }} className="grid-cols-1-mobile">
                 <StatCard title="Total Orders" value={stats.totalOrders} icon={ShoppingCart} color="#65bd4a" />
                 <StatCard title="Today's Revenue" value={`Rs. ${stats.todaysRevenue?.toFixed(2) || '0.00'}`} icon={BadgeDollarSign} color="#10b981" />
                 <StatCard title="Total Customers" value={stats.totalCustomers} icon={Users} color="#f59e0b" />

@@ -176,3 +176,39 @@ button {
 .bg-gray-900 {
   background-color: #111827;
 }
+
+/* Responsive Utilities */
+@media (max-width: 768px) {
+  .hidden-mobile {
+    display: none !important;
+  }
+  
+  .container {
+    padding: 0 0.75rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 769px) {
+  .show-mobile-only {
+    display: none !important;
+  }
+}
+
+.overflow-x-auto {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.w-full-mobile {
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .grid-cols-1-mobile {
+    grid-template-columns: 1fr !important;
+  }
+}

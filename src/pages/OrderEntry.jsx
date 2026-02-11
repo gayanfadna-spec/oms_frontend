@@ -281,7 +281,11 @@ const OrderEntry = () => {
         <div className="container">
             <h1 style={{ marginBottom: '2rem' }}>{id ? 'Edit Order' : 'New Order'}</h1>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+            <div style={{
+                display: 'grid',
+                gridTemplateColumns: window.innerWidth <= 1024 ? '1fr' : '1fr 1fr',
+                gap: window.innerWidth <= 768 ? '1rem' : '2rem'
+            }}>
                 {/* Customer Section */}
                 <div className="card glass">
                     <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Customer Details</h2>
@@ -377,9 +381,15 @@ const OrderEntry = () => {
                         </button>
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', overflowX: 'auto' }}>
                         {items.map((item, index) => (
-                            <div key={index} style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr auto', gap: '0.5rem', alignItems: 'center' }}>
+                            <div key={index} style={{
+                                display: 'grid',
+                                gridTemplateColumns: window.innerWidth <= 640 ? '1fr 80px 80px auto' : '2fr 1fr 1fr auto',
+                                gap: '0.5rem',
+                                alignItems: 'center',
+                                minWidth: window.innerWidth <= 640 ? '400px' : 'auto'
+                            }}>
                                 <input
                                     list={`product-list-${index}`}
                                     className="input-field"

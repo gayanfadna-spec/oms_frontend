@@ -163,45 +163,68 @@ const Orders = () => {
 
     return (
         <div className="container">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <div style={{
+                display: 'flex',
+                flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
+                justifyContent: 'space-between',
+                alignItems: window.innerWidth <= 768 ? 'flex-start' : 'center',
+                marginBottom: '2rem',
+                gap: '1rem'
+            }}>
                 <h1 style={{ margin: 0 }}>Orders</h1>
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                    <div className="input-group" style={{ marginBottom: 0 }}>
-                        <div style={{ position: 'relative' }}>
+                <div style={{
+                    display: 'flex',
+                    flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
+                    gap: '1rem',
+                    width: window.innerWidth <= 768 ? '100%' : 'auto'
+                }}>
+                    <div className="input-group" style={{ marginBottom: 0, width: '100%' }}>
+                        <div style={{ position: 'relative', width: '100%' }}>
                             <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-dim)' }} />
                             <input
                                 type="text"
                                 className="input-field"
                                 placeholder="Search orders..."
-                                style={{ paddingLeft: '2.5rem', width: '350px' }}
+                                style={{ paddingLeft: '2.5rem', width: '100%', minWidth: window.innerWidth <= 768 ? '0' : '350px' }}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                     </div>
-                    {isAdmin && (
-                        <div>
-                            <label htmlFor="csv-upload" className="btn btn-primary" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <Upload size={18} /> Import CSV
-                            </label>
-                            <input
-                                id="csv-upload"
-                                type="file"
-                                accept=".csv"
-                                onChange={handleFileUpload}
-                                style={{ display: 'none' }}
-                            />
-                        </div>
-                    )}
-                    {user?.role === 'Super Admin' && (
-                        <button
-                            onClick={handleBulkDelete}
-                            className="btn"
-                            style={{ background: 'var(--danger)', color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-                        >
-                            <Trash2 size={18} /> Delete All Orders
-                        </button>
-                    )}
+                    <div style={{ display: 'flex', gap: '0.5rem', width: window.innerWidth <= 768 ? '100%' : 'auto' }}>
+                        {isAdmin && (
+                            <div style={{ flex: 1 }}>
+                                <label htmlFor="csv-upload" className="btn btn-primary" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.75rem 1rem' }}>
+                                    <Upload size={18} /> <span className={window.innerWidth <= 640 ? 'text-xs' : ''}>Import</span>
+                                </label>
+                                <input
+                                    id="csv-upload"
+                                    type="file"
+                                    accept=".csv"
+                                    onChange={handleFileUpload}
+                                    style={{ display: 'none' }}
+                                />
+                            </div>
+                        )}
+                        {user?.role === 'Super Admin' && (
+                            <button
+                                onClick={handleBulkDelete}
+                                className="btn"
+                                style={{
+                                    background: 'var(--danger)',
+                                    color: 'white',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '0.5rem',
+                                    padding: '0.75rem 1rem',
+                                    flex: 1
+                                }}
+                            >
+                                <Trash2 size={18} /> <span className={window.innerWidth <= 640 ? 'text-xs' : ''}>Clear All</span>
+                            </button>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -411,10 +434,11 @@ const Orders = () => {
                     <div
                         className="card glass"
                         style={{
-                            width: '450px',
+                            width: '95%',
+                            maxWidth: '450px',
                             maxHeight: '90vh',
                             overflowY: 'auto',
-                            padding: '2rem',
+                            padding: window.innerWidth <= 768 ? '1.5rem' : '2rem',
                             position: 'relative',
                             border: '1px solid var(--primary)'
                         }}

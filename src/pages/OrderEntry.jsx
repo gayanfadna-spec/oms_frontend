@@ -280,7 +280,7 @@ const OrderEntry = () => {
         <div className="container">
             <h1 style={{ marginBottom: '2rem' }}>{id ? 'Edit Order' : 'New Order'}</h1>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                 {/* Customer Section */}
                 <div className="card glass">
                     <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Customer Details</h2>

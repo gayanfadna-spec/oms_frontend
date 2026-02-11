@@ -129,6 +129,9 @@ const Layout = () => {
             {/* Sidebar */}
             <aside style={{
                 position: isMobile ? 'fixed' : 'relative',
+                top: 0,
+                left: 0,
+                bottom: 0,
                 zIndex: 50,
                 height: '100%',
                 width: sidebarOpen ? '260px' : '0px',

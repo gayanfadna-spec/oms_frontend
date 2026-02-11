@@ -205,7 +205,11 @@ const OrderEntry = () => {
         try {
             let customerId = customer?._id;
 
-            // If new customer, create first. 
+            if (!customerForm.city) {
+                setError('City is required');
+                setLoading(false);
+                return;
+            }
             // TODO: If existing customer & details changed, should we update? 
             // For now, assuming only new customers are created here.
             if (!customer) {
@@ -341,6 +345,7 @@ const OrderEntry = () => {
                             className="input-field"
                             value={customerForm.city}
                             onChange={e => setCustomerForm({ ...customerForm, city: e.target.value })}
+                            required
                         />
                     </div>
                     <div className="input-group">

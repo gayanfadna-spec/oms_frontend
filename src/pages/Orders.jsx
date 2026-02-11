@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import AuthContext from '../context/AuthContext';
-import { Search, Filter, ChevronDown, CheckCircle, XCircle, Clock, Truck, Package, Edit, Trash2, Upload, MessageCircle } from 'lucide-react';
+import { Search, Filter, ChevronDown, CheckCircle, XCircle, Clock, Truck, Package, Edit, Trash2, Upload, MessageCircle, MapPin } from 'lucide-react';
 
 const Orders = () => {
     const { user } = useContext(AuthContext);
@@ -10,6 +10,7 @@ const Orders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
 
     const fetchOrders = async () => {
         try {
@@ -240,7 +241,13 @@ const Orders = () => {
                                         )}
                                     </td>
                                     <td style={{ padding: '1rem' }}>
-                                        <div style={{ fontWeight: 'bold' }}>{order.customer?.name || 'Unknown'}</div>
+                                        <div
+                                            style={{ fontWeight: 'bold', cursor: 'pointer', color: 'var(--primary)' }}
+                                            onClick={() => setSelectedCustomer(order.customer)}
+                                            title="View Customer Details"
+                                        >
+                                            {order.customer?.name || 'Unknown'}
+                                        </div>
                                         <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>{order.customer?.phone}</div>
                                         {order.customer?.phone2 && (
                                             <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Alt: {order.customer?.phone2}</div>
@@ -382,6 +389,100 @@ const Orders = () => {
                     </table>
                 </div>
             </div>
+
+            {/* Customer Details Modal */}
+            {selectedCustomer && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.7)',
+                    backdropFilter: 'blur(4px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000,
+                    padding: '2rem'
+                }} onClick={() => setSelectedCustomer(null)}>
+                    <div className="card glass" style={{
+                        maxWidth: '500px',
+                        width: '100%',
+                        position: 'relative',
+                        padding: '2rem'
+                    }} onClick={(e) => e.stopPropagation()}>
+                        <button
+                            onClick={() => setSelectedCustomer(null)}
+                            style={{
+                                position: 'absolute',
+                                top: '1rem',
+                                right: '1rem',
+                                background: 'transparent',
+                                color: 'var(--text-dim)'
+                            }}
+                        >
+                            <XCircle size={24} />
+                        </button>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
+                            <div style={{
+                                width: '64px',
+                                height: '64px',
+                                borderRadius: '50%',
+                                background: 'var(--primary)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '1.5rem',
+                                fontWeight: 'bold',
+                                color: 'white'
+                            }}>
+                                {selectedCustomer.name?.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <h2 style={{ margin: 0 }}>{selectedCustomer.name}</h2>
+                                <p style={{ margin: 0, color: 'var(--text-dim)' }}>Customer Profile</p>
+                            </div>
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <div style={{ display: 'flex', alignItems: 'start', gap: '1rem' }}>
+                                <MessageCircle size={20} style={{ color: 'var(--primary)', marginTop: '0.25rem' }} />
+                                <div>
+                                    <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Primary Contact</div>
+                                    <div style={{ fontWeight: 500 }}>{selectedCustomer.phone}</div>
+                                    {selectedCustomer.phone2 && (
+                                        <>
+                                            <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '0.5rem' }}>Secondary Contact</div>
+                                            <div style={{ fontWeight: 500 }}>{selectedCustomer.phone2}</div>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div style={{ display: 'flex', alignItems: 'start', gap: '1rem' }}>
+                                <MapPin size={20} style={{ color: 'var(--primary)', marginTop: '0.25rem' }} />
+                                <div>
+                                    <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Address</div>
+                                    <div style={{ fontWeight: 500 }}>
+                                        {selectedCustomer.address}<br />
+                                        {selectedCustomer.city}, {selectedCustomer.country}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button
+                            className="btn btn-primary"
+                            style={{ width: '100%', marginTop: '2rem' }}
+                            onClick={() => setSelectedCustomer(null)}
+                        >
+                            Close Details
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

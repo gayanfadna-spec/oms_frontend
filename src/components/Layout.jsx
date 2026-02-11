@@ -128,7 +128,7 @@ const Layout = () => {
 
             {/* Sidebar */}
             <aside style={{
-                position: window.innerWidth <= 768 ? 'fixed' : 'relative',
+                position: isMobile ? 'fixed' : 'relative',
                 zIndex: 50,
                 height: '100%',
                 width: sidebarOpen ? '260px' : '0px',
@@ -137,12 +137,13 @@ const Layout = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 transition: 'width 0.3s ease, transform 0.3s ease',
+                padding: sidebarOpen ? '0' : '0',
                 overflow: 'hidden',
                 flexShrink: 0,
-                transform: (window.innerWidth <= 768 && !sidebarOpen) ? 'translateX(-100%)' : 'translateX(0)'
+                transform: (isMobile && !sidebarOpen) ? 'translateX(-100%)' : 'translateX(0)'
             }}>
                 <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                    {window.innerWidth <= 768 && (
+                    {isMobile && (
                         <button
                             onClick={() => setSidebarOpen(false)}
                             style={{ position: 'absolute', right: '1rem', top: '1rem', background: 'transparent', color: 'var(--text-dim)' }}
@@ -162,7 +163,7 @@ const Layout = () => {
                         <NavLink
                             key={item.path}
                             to={item.path}
-                            onClick={() => window.innerWidth <= 768 && setSidebarOpen(false)}
+                            onClick={() => isMobile && setSidebarOpen(false)}
                             style={({ isActive }) => ({
                                 display: 'flex',
                                 alignItems: 'center',
@@ -218,10 +219,10 @@ const Layout = () => {
                         gap: '0.5rem',
                         fontWeight: 'bold',
                         animation: 'pulse 2s infinite',
-                        fontSize: window.innerWidth <= 768 ? '0.8rem' : '1rem'
+                        fontSize: isMobile ? '0.8rem' : '1rem'
                     }}>
-                        <AlertTriangle size={window.innerWidth <= 768 ? 18 : 24} />
-                        <span>{window.innerWidth <= 768 ? `${pendingEditsCount} Pending Edits` : `URGENT: You have ${pendingEditsCount} pending edit request${pendingEditsCount > 1 ? 's' : ''}. Please check Orders immediately.`}</span>
+                        <AlertTriangle size={isMobile ? 18 : 24} />
+                        <span>{isMobile ? `${pendingEditsCount} Pending Edits` : `URGENT: You have ${pendingEditsCount} pending edit request${pendingEditsCount > 1 ? 's' : ''}. Please check Orders immediately.`}</span>
                     </div>
                 )}
                 <header style={{
@@ -237,14 +238,14 @@ const Layout = () => {
                     <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ background: 'transparent', color: 'var(--text-dim)', padding: '0.5rem' }}>
                         <Menu size={24} />
                     </button>
-                    {window.innerWidth <= 768 && (
+                    {isMobile && (
                         <div style={{ fontWeight: 'bold', color: 'var(--primary)' }}>Fadna OMS</div>
                     )}
                     <div className="hidden-mobile" style={{ fontSize: '0.875rem', color: 'var(--text-dim)' }}>
                         {user?.name} ({user?.role})
                     </div>
                 </header>
-                <div style={{ flex: 1, overflow: 'auto', padding: window.innerWidth <= 768 ? '1rem' : '2rem' }}>
+                <div style={{ flex: 1, overflow: 'auto', padding: isMobile ? '1rem' : '2rem' }}>
                     <Outlet />
                 </div>
             </main>

@@ -86,7 +86,7 @@ const Dashboard = () => {
                         <h3 style={{ margin: 0 }}>Agent-wise Product Order Count (Today)</h3>
                         <span style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>Updated: {new Date().toLocaleString('en-GB', { hour12: false })}</span>
                     </div>
-                    <div style={{ overflowX: 'auto' }}>
+                    <div className="table-container">
                         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '800px' }}>
                             <thead>
                                 <tr style={{ borderBottom: '1px solid var(--glass-border)' }}>

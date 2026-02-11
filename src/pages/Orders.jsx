@@ -163,20 +163,17 @@ const Orders = () => {
 
     return (
         <div className="container">
-            <div style={{
+            <div className="flex-col-mobile" style={{
                 display: 'flex',
-                flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
                 justifyContent: 'space-between',
-                alignItems: window.innerWidth <= 768 ? 'flex-start' : 'center',
+                alignItems: 'center',
                 marginBottom: '2rem',
                 gap: '1rem'
             }}>
                 <h1 style={{ margin: 0 }}>Orders</h1>
-                <div style={{
+                <div className="flex-col-mobile w-full-mobile" style={{
                     display: 'flex',
-                    flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
-                    gap: '1rem',
-                    width: window.innerWidth <= 768 ? '100%' : 'auto'
+                    gap: '1rem'
                 }}>
                     <div className="input-group" style={{ marginBottom: 0, width: '100%' }}>
                         <div style={{ position: 'relative', width: '100%' }}>
@@ -185,17 +182,17 @@ const Orders = () => {
                                 type="text"
                                 className="input-field"
                                 placeholder="Search orders..."
-                                style={{ paddingLeft: '2.5rem', width: '100%', minWidth: window.innerWidth <= 768 ? '0' : '350px' }}
+                                style={{ paddingLeft: '2.5rem', width: '100%' }}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                     </div>
-                    <div style={{ display: 'flex', gap: '0.5rem', width: window.innerWidth <= 768 ? '100%' : 'auto' }}>
+                    <div className="w-full-mobile" style={{ display: 'flex', gap: '0.5rem' }}>
                         {isAdmin && (
                             <div style={{ flex: 1 }}>
                                 <label htmlFor="csv-upload" className="btn btn-primary" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '0.75rem 1rem' }}>
-                                    <Upload size={18} /> <span className={window.innerWidth <= 640 ? 'text-xs' : ''}>Import</span>
+                                    <Upload size={18} /> <span className="hidden-mobile">Import</span><span className="show-mobile-only">CSV</span>
                                 </label>
                                 <input
                                     id="csv-upload"
@@ -432,13 +429,12 @@ const Orders = () => {
                     onClick={() => setSelectedCustomer(null)}
                 >
                     <div
-                        className="card glass"
+                        className="card glass p-4-mobile"
                         style={{
                             width: '95%',
                             maxWidth: '450px',
                             maxHeight: '90vh',
                             overflowY: 'auto',
-                            padding: window.innerWidth <= 768 ? '1.5rem' : '2rem',
                             position: 'relative',
                             border: '1px solid var(--primary)'
                         }}

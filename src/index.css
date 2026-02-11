@@ -182,7 +182,7 @@ button {
   .hidden-mobile {
     display: none !important;
   }
-  
+
   .container {
     padding: 0 0.75rem;
   }
@@ -211,4 +211,48 @@ button {
   .grid-cols-1-mobile {
     grid-template-columns: 1fr !important;
   }
+}
+
+/* New Responsive Utilities */
+.flex-col-mobile {
+  display: flex !important;
+}
+
+@media (max-width: 768px) {
+  .flex-col-mobile {
+    flex-direction: column !important;
+  }
+
+  .w-full-mobile {
+    width: 100% !important;
+  }
+
+  .items-start-mobile {
+    align-items: flex-start !important;
+  }
+
+  .gap-4-mobile {
+    gap: 1rem !important;
+  }
+
+  .p-4-mobile {
+    padding: 1rem !important;
+  }
+}
+
+.stack-mobile {
+  display: flex;
+  flex-direction: row;
+}
+
+@media (max-width: 1024px) {
+  .stack-mobile {
+    flex-direction: column;
+  }
+}
+
+.table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 1rem;
 }

@@ -82,20 +82,11 @@ const Customers = () => {
 
     return (
         <div className="container">
-            <div style={{
-                display: 'flex',
-                flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
-                justifyContent: 'space-between',
-                alignItems: window.innerWidth <= 768 ? 'flex-start' : 'center',
-                marginBottom: '2rem',
-                gap: '1rem'
-            }}>
+            <div className="flex-col-mobile" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '1rem' }}>
                 <h1 style={{ margin: 0 }}>Customers</h1>
-                <div style={{
+                <div className="flex-col-mobile w-full-mobile" style={{
                     display: 'flex',
-                    flexDirection: window.innerWidth <= 768 ? 'column' : 'row',
-                    gap: '1rem',
-                    width: window.innerWidth <= 768 ? '100%' : 'auto'
+                    gap: '1rem'
                 }}>
                     <div className="input-group" style={{ marginBottom: 0, width: '100%' }}>
                         <div style={{ position: 'relative', width: '100%' }}>
@@ -104,13 +95,13 @@ const Customers = () => {
                                 type="text"
                                 className="input-field"
                                 placeholder="Search customers..."
-                                style={{ paddingLeft: '2.5rem', width: '100%', minWidth: window.innerWidth <= 768 ? '0' : '250px' }}
+                                style={{ paddingLeft: '2.5rem', width: '100%' }}
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                             />
                         </div>
                     </div>
-                    <div style={{ display: 'flex', gap: '0.5rem', width: window.innerWidth <= 768 ? '100%' : 'auto' }}>
+                    <div className="w-full-mobile" style={{ display: 'flex', gap: '0.5rem' }}>
                         {user?.role === 'Super Admin' && (
                             <button
                                 onClick={() => {
@@ -239,7 +230,7 @@ const Customers = () => {
                     </table>
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

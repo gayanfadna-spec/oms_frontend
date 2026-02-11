@@ -281,11 +281,7 @@ const OrderEntry = () => {
         <div className="container">
             <h1 style={{ marginBottom: '2rem' }}>{id ? 'Edit Order' : 'New Order'}</h1>
 
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: window.innerWidth <= 1024 ? '1fr' : '1fr 1fr',
-                gap: window.innerWidth <= 768 ? '1rem' : '2rem'
-            }}>
+            <div className="stack-mobile" style={{ gap: '2rem' }}>
                 {/* Customer Section */}
                 <div className="card glass">
                     <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Customer Details</h2>
@@ -418,133 +414,133 @@ const OrderEntry = () => {
                             </div>
                         ))}
                     </div>
-
-                    <div style={{ marginTop: '2rem', borderTop: '1px solid var(--glass-border)', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem', color: 'var(--text-dim)' }}>
-                            <span>Subtotal:</span>
-                            <span>Rs. {items.reduce((acc, item) => acc + (item.price * item.quantity), 0).toFixed(2)}</span>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem', color: 'var(--warning)' }}>
-                            <span>Delivery Charge:</span>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                                <span>+ Rs.</span>
-                                <input
-                                    type="number"
-                                    min="0"
-                                    className="input-field"
-                                    style={{ width: '80px', padding: '0.25rem' }}
-                                    value={deliveryCharge}
-                                    onChange={(e) => {
-                                        setDeliveryCharge(Number(e.target.value));
-                                        setIsManualDelivery(true);
-                                    }}
-                                />
-                            </div>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem', color: 'var(--success)' }}>
-                            <span>Discount (%):</span>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                                <input
-                                    type="number"
-                                    min="0"
-                                    max="100"
-                                    className="input-field"
-                                    style={{ width: '80px', padding: '0.25rem' }}
-                                    value={discountPercentage}
-                                    onChange={(e) => handleDiscountPercentageChange(e.target.value)}
-                                />
-                                <span>%</span>
-                            </div>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem', color: 'var(--success)' }}>
-                            <span>Discount Amount (Rs.):</span>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                                <span>- Rs.</span>
-                                <input
-                                    type="number"
-                                    min="0"
-                                    className="input-field"
-                                    style={{ width: '100px', padding: '0.25rem' }}
-                                    value={discountAmount}
-                                    onChange={(e) => handleDiscountAmountChange(e.target.value)}
-                                />
-                            </div>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '1.5rem', fontWeight: 'bold' }}>
-                            <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', fontSize: '1rem' }}>
-                                {/* Payment Method Selector Moved Here */}
-                                <span style={{ fontWeight: 500 }}>Payment:</span>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', cursor: 'pointer' }}>
-                                    <input
-                                        type="radio"
-                                        name="paymentMethod"
-                                        value="COD"
-                                        checked={paymentMethod === 'COD'}
-                                        onChange={(e) => setPaymentMethod(e.target.value)}
-                                    />
-                                    COD
-                                </label>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', cursor: 'pointer' }}>
-                                    <input
-                                        type="radio"
-                                        name="paymentMethod"
-                                        value="Paid"
-                                        checked={paymentMethod === 'Paid'}
-                                        onChange={(e) => setPaymentMethod(e.target.value)}
-                                    />
-                                    Paid
-                                </label>
-                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', cursor: 'pointer' }}>
-                                    <input
-                                        type="radio"
-                                        name="paymentMethod"
-                                        value="Export"
-                                        checked={paymentMethod === 'Export'}
-                                        onChange={(e) => setPaymentMethod(e.target.value)}
-                                    />
-                                    Export
-                                </label>
-                            </div>
-                            <div>
-                                Total: Rs. {calculateTotal().toFixed(2)}
-                            </div>
-                        </div>
-
-                        <div className="input-group" style={{ marginTop: '1rem' }}>
-                            <label className="input-label">Remark (Any discounts or special instructions)</label>
-                            <textarea
-                                className="input-field"
-                                value={remark}
-                                onChange={(e) => setRemark(e.target.value)}
-                                placeholder="Add any notes about this order..."
-                                rows="3"
-                                style={{ resize: 'vertical' }}
-                            />
-                        </div>
-
-                        <div className="input-group" style={{ marginTop: '1rem' }}>
-                            <label className="input-label">Additional Remark (Are there want to add any doctor consultation )</label>
-                            <textarea
-                                className="input-field"
-                                value={additionalRemark}
-                                onChange={(e) => setAdditionalRemark(e.target.value)}
-                                placeholder="Add any other details..."
-                                rows="2"
-                                style={{ resize: 'vertical' }}
-                            />
-                        </div>
-
-                        <button
-                            onClick={handleSubmit}
-                            className="btn btn-primary"
-                            disabled={loading || items.length === 0 || !phone}
-                            style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '1rem' }}
-                        >
-                            <Save size={20} /> {id ? 'Update Order' : 'Create Order'}
-                        </button>
-                    </div>
-                    {error && <div style={{ marginTop: '1rem', color: 'var(--danger)' }}>{error}</div>}
                 </div>
+
+                <div style={{ marginTop: '2rem', borderTop: '1px solid var(--glass-border)', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem', color: 'var(--text-dim)' }}>
+                        <span>Subtotal:</span>
+                        <span>Rs. {items.reduce((acc, item) => acc + (item.price * item.quantity), 0).toFixed(2)}</span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem', color: 'var(--warning)' }}>
+                        <span>Delivery Charge:</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                            <span>+ Rs.</span>
+                            <input
+                                type="number"
+                                min="0"
+                                className="input-field"
+                                style={{ width: '80px', padding: '0.25rem' }}
+                                value={deliveryCharge}
+                                onChange={(e) => {
+                                    setDeliveryCharge(Number(e.target.value));
+                                    setIsManualDelivery(true);
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem', color: 'var(--success)' }}>
+                        <span>Discount (%):</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                            <input
+                                type="number"
+                                min="0"
+                                max="100"
+                                className="input-field"
+                                style={{ width: '80px', padding: '0.25rem' }}
+                                value={discountPercentage}
+                                onChange={(e) => handleDiscountPercentageChange(e.target.value)}
+                            />
+                            <span>%</span>
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem', color: 'var(--success)' }}>
+                        <span>Discount Amount (Rs.):</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                            <span>- Rs.</span>
+                            <input
+                                type="number"
+                                min="0"
+                                className="input-field"
+                                style={{ width: '100px', padding: '0.25rem' }}
+                                value={discountAmount}
+                                onChange={(e) => handleDiscountAmountChange(e.target.value)}
+                            />
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '1.5rem', fontWeight: 'bold' }}>
+                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', fontSize: '1rem' }}>
+                            {/* Payment Method Selector Moved Here */}
+                            <span style={{ fontWeight: 500 }}>Payment:</span>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', cursor: 'pointer' }}>
+                                <input
+                                    type="radio"
+                                    name="paymentMethod"
+                                    value="COD"
+                                    checked={paymentMethod === 'COD'}
+                                    onChange={(e) => setPaymentMethod(e.target.value)}
+                                />
+                                COD
+                            </label>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', cursor: 'pointer' }}>
+                                <input
+                                    type="radio"
+                                    name="paymentMethod"
+                                    value="Paid"
+                                    checked={paymentMethod === 'Paid'}
+                                    onChange={(e) => setPaymentMethod(e.target.value)}
+                                />
+                                Paid
+                            </label>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', cursor: 'pointer' }}>
+                                <input
+                                    type="radio"
+                                    name="paymentMethod"
+                                    value="Export"
+                                    checked={paymentMethod === 'Export'}
+                                    onChange={(e) => setPaymentMethod(e.target.value)}
+                                />
+                                Export
+                            </label>
+                        </div>
+                        <div>
+                            Total: Rs. {calculateTotal().toFixed(2)}
+                        </div>
+                    </div>
+
+                    <div className="input-group" style={{ marginTop: '1rem' }}>
+                        <label className="input-label">Remark (Any discounts or special instructions)</label>
+                        <textarea
+                            className="input-field"
+                            value={remark}
+                            onChange={(e) => setRemark(e.target.value)}
+                            placeholder="Add any notes about this order..."
+                            rows="3"
+                            style={{ resize: 'vertical' }}
+                        />
+                    </div>
+
+                    <div className="input-group" style={{ marginTop: '1rem' }}>
+                        <label className="input-label">Additional Remark (Are there want to add any doctor consultation )</label>
+                        <textarea
+                            className="input-field"
+                            value={additionalRemark}
+                            onChange={(e) => setAdditionalRemark(e.target.value)}
+                            placeholder="Add any other details..."
+                            rows="2"
+                            style={{ resize: 'vertical' }}
+                        />
+                    </div>
+
+                    <button
+                        onClick={handleSubmit}
+                        className="btn btn-primary"
+                        disabled={loading || items.length === 0 || !phone}
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '1rem' }}
+                    >
+                        <Save size={20} /> {id ? 'Update Order' : 'Create Order'}
+                    </button>
+                </div>
+                {error && <div style={{ marginTop: '1rem', color: 'var(--danger)' }}>{error}</div>}
             </div>
         </div>
     );

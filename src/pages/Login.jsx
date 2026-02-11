@@ -12,11 +12,11 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
 
     // Auto-redirect removed to allow viewing login page
-    // useEffect(() => {
-    //     if (user) {
-    //         navigate('/dashboard');
-    //     }
-    // }, [user, navigate]);
+    useEffect(() => {
+        if (user) {
+            navigate('/dashboard');
+        }
+    }, [user, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

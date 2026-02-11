@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --primary: #65bd4a;
   --primary-hover: #54a03e;
   --bg-dark: #ffffff;
@@ -262,9 +262,4 @@ button {
     backdrop-filter: blur(4px) !important;
     -webkit-backdrop-filter: blur(4px) !important;
   }
-}
-
-overflow-x: auto;
--webkit-overflow-scrolling: touch;
-margin-bottom: 1rem;
 }

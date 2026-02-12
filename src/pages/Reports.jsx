@@ -5,8 +5,19 @@ import { Download, Calendar } from 'lucide-react';
 
 const Reports = () => {
     const { user } = useContext(AuthContext);
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+
+    // Get current month start and end in 24h format (YYYY-MM-DDTHH:mm)
+    const now = new Date();
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+
+    const formatForInput = (date) => {
+        const pad = (num) => String(num).padStart(2, '0');
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    };
+
+    const [startDate, setStartDate] = useState(formatForInput(firstDay));
+    const [endDate, setEndDate] = useState(formatForInput(lastDay));
     const [paymentStatus, setPaymentStatus] = useState('All');
     const [agents, setAgents] = useState([]);
     const [selectedAgent, setSelectedAgent] = useState('All');
@@ -99,7 +110,7 @@ const Reports = () => {
                 const totalQty = order.items.reduce((sum, item) => sum + item.quantity, 0);
 
                 const row = [
-                    new Date(order.createdAt).toLocaleDateString(),
+                    new Date(order.createdAt).toLocaleString('en-GB', { hour12: false }),
                     `"${productNames.replace(/"/g, '""')}"`,
                     `"${(order.remark || '').replace(/"/g, '""')}"`,
                     order.discountAmount || 0,
@@ -133,7 +144,8 @@ const Reports = () => {
                 ? agents.find(a => a._id === selectedAgent)?.name?.replace(/\s+/g, '_') || 'Agent'
                 : 'All_Agents';
 
-            a.setAttribute('download', `orders_report_${agentName}_${startDate}_to_${endDate}.csv`);
+            const formatFileNameDate = (d) => d.replace(/[:T]/g, '-').slice(0, 16);
+            a.setAttribute('download', `orders_report_${agentName}_${formatFileNameDate(startDate)}_to_${formatFileNameDate(endDate)}.csv`);
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -270,13 +282,13 @@ const Reports = () => {
                                 {history.map((log) => (
                                     <tr key={log._id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
                                         <td style={{ padding: '0.75rem', fontSize: '0.875rem' }}>
-                                            {new Date(log.generatedAt).toLocaleString()}
+                                            {new Date(log.generatedAt).toLocaleString('en-GB', { hour12: false })}
                                         </td>
                                         <td style={{ padding: '0.75rem', fontSize: '0.875rem' }}>
                                             {log.generatedBy?.name || 'Unknown'}
                                         </td>
                                         <td style={{ padding: '0.75rem', fontSize: '0.875rem' }}>
-                                            {new Date(log.startDate).toLocaleDateString()} - {new Date(log.endDate).toLocaleDateString()}
+                                            {new Date(log.startDate).toLocaleString('en-GB', { hour12: false })} - {new Date(log.endDate).toLocaleString('en-GB', { hour12: false })}
                                         </td>
                                         <td style={{ padding: '0.75rem', fontSize: '0.875rem' }}>
                                             <span className={`px-2 py-1 rounded text-xs font-medium ${log.paymentStatus === 'Paid' ? 'text-green-400 bg-green-400/10' : log.paymentStatus === 'Export' ? 'text-blue-400 bg-blue-400/10' : log.paymentStatus === 'COD' ? 'text-yellow-400 bg-yellow-400/10' : 'text-gray-400 bg-gray-400/10'}`}

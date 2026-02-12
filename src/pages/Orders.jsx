@@ -126,8 +126,8 @@ const Orders = () => {
     };
 
     const handleDelete = async (id) => {
-        if (user?.role !== 'Super Admin') {
-            alert('Only Super Admin can delete orders.');
+        if (user?.role !== 'Super Admin' && user?.role !== 'Admin') {
+            alert('Only Admin or Super Admin can delete orders.');
             return;
         }
 
@@ -359,7 +359,7 @@ const Orders = () => {
                                                     >
                                                         <Edit size={18} />
                                                     </button>
-                                                    {user?.role === 'Super Admin' && (
+                                                    {(user?.role === 'Super Admin' || user?.role === 'Admin') && (
                                                         <button
                                                             onClick={() => handleDelete(order._id)}
                                                             className="btn"

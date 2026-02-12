@@ -92,9 +92,9 @@ const Reports = () => {
 
             // Convert JSON to CSV
             const headers = [
-                'Date', 'Product', 'Remark', 'Discount (Rs.)', 'Customer Name', 'Address', 'City',
-                'Contact 1', 'Contact 2', 'Qty', 'Total', 'Description',
-                'Items', 'Additional Remark', 'Agent'
+                'Date', 'Time', 'Product', 'Remark', 'Subtotal (Rs.)', 'Discount (Rs.)', 'Delivery (Rs.)', 'Total (Rs.)', 'Customer Name', 'Address', 'City',
+                'Contact 1', 'Contact 2', 'Qty', 'Payment Status',
+                'Items Detail', 'Additional Remark', 'Agent'
             ];
 
             const isAdmin = user.role === 'Admin' || user.role === 'Super Admin';
@@ -109,18 +109,25 @@ const Reports = () => {
                 const itemsWithQty = order.items.map(i => `${i.productName} ${i.quantity}`).join('; ');
                 const totalQty = order.items.reduce((sum, item) => sum + item.quantity, 0);
 
+                const createdAt = new Date(order.createdAt);
+                const dateStr = createdAt.toLocaleDateString('en-GB');
+                const timeStr = createdAt.toLocaleTimeString('en-GB', { hour12: false });
+
                 const row = [
-                    new Date(order.createdAt).toLocaleString('en-GB', { hour12: false }),
+                    `"${dateStr}"`,
+                    `"${timeStr}"`,
                     `"${productNames.replace(/"/g, '""')}"`,
                     `"${(order.remark || '').replace(/"/g, '""')}"`,
+                    order.totalAmount || 0,
                     order.discountAmount || 0,
+                    order.deliveryCharge || 0,
+                    order.finalAmount || 0,
                     `"${(order.customer?.name || 'N/A').replace(/"/g, '""')}"`,
                     `"${(order.customer?.address || '').replace(/"/g, '""')}"`,
                     `"${(order.customer?.city || '').replace(/"/g, '""')}"`,
                     `"${(order.customer?.phone || '').replace(/"/g, '""')}"`,
                     `"${(order.customer?.phone2 || '').replace(/"/g, '""')}"`,
                     totalQty,
-                    order.finalAmount,
                     `"${(order.paymentStatus || '').replace(/"/g, '""')}"`,
                     `"${itemsWithQty.replace(/"/g, '""')}"`,
                     `"${(order.additionalRemark || '').replace(/"/g, '""')}"`,

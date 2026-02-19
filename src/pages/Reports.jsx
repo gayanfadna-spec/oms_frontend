@@ -110,8 +110,10 @@ const Reports = () => {
                 const totalQty = order.items.reduce((sum, item) => sum + item.quantity, 0);
 
                 const createdAt = new Date(order.createdAt);
-                const dateStr = createdAt.toLocaleDateString('en-GB');
-                const timeStr = createdAt.toLocaleTimeString('en-GB', { hour12: false });
+
+                const pad = (num) => String(num).padStart(2, '0');
+                const dateStr = `${pad(createdAt.getDate())}/${pad(createdAt.getMonth() + 1)}/${createdAt.getFullYear()}`;
+                const timeStr = `${pad(createdAt.getHours())}:${pad(createdAt.getMinutes())}:${pad(createdAt.getSeconds())}`;
 
                 const row = [
                     `"${dateStr}"`,
@@ -289,13 +291,23 @@ const Reports = () => {
                                 {history.map((log) => (
                                     <tr key={log._id} style={{ borderBottom: '1px solid var(--glass-border)' }}>
                                         <td style={{ padding: '0.75rem', fontSize: '0.875rem' }}>
-                                            {new Date(log.generatedAt).toLocaleString('en-GB', { hour12: false })}
+                                            {(() => {
+                                                const d = new Date(log.generatedAt);
+                                                const pad = (num) => String(num).padStart(2, '0');
+                                                return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+                                            })()}
                                         </td>
                                         <td style={{ padding: '0.75rem', fontSize: '0.875rem' }}>
                                             {log.generatedBy?.name || 'Unknown'}
                                         </td>
                                         <td style={{ padding: '0.75rem', fontSize: '0.875rem' }}>
-                                            {new Date(log.startDate).toLocaleString('en-GB', { hour12: false })} - {new Date(log.endDate).toLocaleString('en-GB', { hour12: false })}
+                                            {(() => {
+                                                const s = new Date(log.startDate);
+                                                const e = new Date(log.endDate);
+                                                const pad = (num) => String(num).padStart(2, '0');
+                                                const format = (d) => `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+                                                return `${format(s)} - ${format(e)}`;
+                                            })()}
                                         </td>
                                         <td style={{ padding: '0.75rem', fontSize: '0.875rem' }}>
                                             <span className={`px-2 py-1 rounded text-xs font-medium ${log.paymentStatus === 'Paid' ? 'text-green-400 bg-green-400/10' : log.paymentStatus === 'Export' ? 'text-blue-400 bg-blue-400/10' : log.paymentStatus === 'COD' ? 'text-yellow-400 bg-yellow-400/10' : 'text-gray-400 bg-gray-400/10'}`}

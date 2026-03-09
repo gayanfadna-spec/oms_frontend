@@ -12,7 +12,9 @@ import {
     LogOut,
     Menu,
     UserPlus,
-    AlertTriangle
+    AlertTriangle,
+    Moon,
+    Sun
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -21,6 +23,13 @@ const Layout = () => {
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [currentTime, setCurrentTime] = useState(new Date());
+    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -53,6 +62,10 @@ const Layout = () => {
     const handleLogout = () => {
         logout();
         navigate('/login');
+    };
+
+    const toggleTheme = () => {
+        setTheme(theme === 'light' ? 'dark' : 'light');
     };
 
     const navItems = [
@@ -185,12 +198,34 @@ const Layout = () => {
                     borderBottom: '1px solid var(--glass-border)',
                     display: 'flex',
                     alignItems: 'center',
+                    justifyContent: 'space-between',
                     padding: '0 1.5rem',
                     background: 'var(--bg-card)' // or transparent if we want glass effect on header
                 }}>
-                    <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ background: 'transparent', color: 'var(--text-dim)' }}>
+                    <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ background: 'transparent', color: 'var(--text-dim)', display: 'flex' }}>
                         <Menu size={24} />
                     </button>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                        <button
+                            onClick={toggleTheme}
+                            style={{
+                                background: 'transparent',
+                                color: 'var(--text-dim)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '0.5rem',
+                                borderRadius: '50%',
+                                transition: 'background-color 0.2s'
+                            }}
+                            title="Toggle Dark Mode"
+                            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--glass-border)'}
+                            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        >
+                            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+                        </button>
+                    </div>
                 </header>
                 <div style={{ flex: 1, overflow: 'auto', padding: '2rem' }}>
                     <Outlet />

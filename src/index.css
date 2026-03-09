@@ -1,7 +1,7 @@
 :root {
   --primary: #65bd4a;
   --primary-hover: #54a03e;
-  --bg-dark: #ffffff;
+  --bg-dark: #f8fafc;
   --bg-card: #ffffff;
   --text-light: #0f172a;
   --text-dim: #64748b;
@@ -10,6 +10,15 @@
   --success: #10b981;
   --warning: #f59e0b;
   --danger: #ef4444;
+}
+
+[data-theme='dark'] {
+  --bg-dark: #0f172a;
+  --bg-card: #1e293b;
+  --text-light: #f8fafc;
+  --text-dim: #94a3b8;
+  --glass-bg: rgba(30, 41, 59, 0.9);
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 body {
@@ -85,7 +94,7 @@ button {
   width: 100%;
   padding: 0.75rem;
   border-radius: 0.5rem;
-  background: #f1f5f9;
+  background: var(--bg-dark);
   border: 1px solid var(--glass-border);
   color: var(--text-light);
   font-size: 1rem;

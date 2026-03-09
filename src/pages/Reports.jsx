@@ -92,7 +92,7 @@ const Reports = () => {
 
             // Convert JSON to CSV
             const headers = [
-                'Date', 'Time', 'Product', 'Remark', 'Subtotal (Rs.)', 'Discount (Rs.)', 'Delivery (Rs.)', 'Total (Rs.)', 'Customer Name', 'Address', 'City',
+                'Date', 'Time', 'Product', 'Remark', 'Subtotal (Rs.)', 'Discount (Rs.)', 'Delivery (Rs.)', 'Total (Rs.)', 'Customer Name', 'Address', 'City', 'Country',
                 'Contact 1', 'Contact 2', 'Qty', 'Payment Status',
                 'Items Detail', 'Additional Remark', 'Agent'
             ];
@@ -127,6 +127,7 @@ const Reports = () => {
                     `"${(order.customer?.name || 'N/A').replace(/"/g, '""')}"`,
                     `"${(order.customer?.address || '').replace(/"/g, '""')}"`,
                     `"${(order.customer?.city || '').replace(/"/g, '""')}"`,
+                    `"${(order.customer?.country || '').replace(/"/g, '""')}"`,
                     `"${(order.customer?.phone || '').replace(/"/g, '""')}"`,
                     `"${(order.customer?.phone2 || '').replace(/"/g, '""')}"`,
                     totalQty,

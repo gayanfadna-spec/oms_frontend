@@ -94,7 +94,7 @@ const Dashboard = () => {
     };
 
     const [dateRange, setDateRange] = useState({
-        startDate: getLocalISOInputString(new Date(new Date().setHours(0, 1, 0, 0))),
+        startDate: getLocalISOInputString(new Date(new Date().setHours(0, 0, 0, 0))),
         endDate: getLocalISOInputString(new Date(new Date().setHours(23, 59, 0, 0)))
     });
 
@@ -110,7 +110,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const { data } = await api.get('/orders/stats');
+                const { data } = await api.get(`/orders/stats?startDate=${dateRange.startDate}&endDate=${dateRange.endDate}`);
                 setStats(data);
             } catch (err) {
                 console.error("Failed to fetch dashboard stats", err);
@@ -121,7 +121,15 @@ const Dashboard = () => {
 
         fetchStats();
         fetchMatrix(dateRange.startDate, dateRange.endDate);
-    }, []);
+
+        // Polling every 30 seconds to keep stats updated
+        const interval = setInterval(() => {
+            fetchStats();
+            fetchMatrix(dateRange.startDate, dateRange.endDate);
+        }, 30000);
+
+        return () => clearInterval(interval);
+    }, [dateRange.startDate, dateRange.endDate]);
 
     const handleFilter = () => {
         fetchMatrix(dateRange.startDate, dateRange.endDate);
@@ -142,17 +150,6 @@ const Dashboard = () => {
                 <p style={{ color: 'var(--text-dim)', marginTop: '0.5rem' }}>Welcome back, {user?.name || 'Admin'}. Here's what's happening today.</p>
             </div>
 
-            <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                gap: '2rem',
-                marginBottom: '3rem'
-            }}>
-                <StatCard title="Today's Orders" value={stats.todaysOrders || 0} icon={ShoppingCart} color="#65bd4a" />
-                <StatCard title="Today's Revenue" value={`Rs. ${stats.todaysRevenue?.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`} icon={BadgeDollarSign} color="#10b981" />
-                <StatCard title="Today's Customers" value={stats.todaysCustomers || 0} icon={Users} color="#f59e0b" />
-                <StatCard title="Performance" value="100%" icon={TrendingUp} color="#8b5cf6" />
-            </div>
 
             <div className="card glass" style={{ 
                 border: '1px solid var(--glass-border)',
@@ -372,14 +369,13 @@ const Dashboard = () => {
                             style={{ marginTop: '1rem', color: 'var(--primary)', fontWeight: 600 }}
                             onClick={() => {
                                 const today = new Date();
+                                const start = getLocalISOInputString(new Date(today.setHours(0, 0, 0, 0)));
+                                const end = getLocalISOInputString(new Date(today.setHours(23, 59, 0, 0)));
                                 setDateRange({
-                                    startDate: getLocalISOInputString(new Date(today.setHours(0, 1, 0, 0))),
-                                    endDate: getLocalISOInputString(new Date(today.setHours(23, 59, 0, 0)))
+                                    startDate: start,
+                                    endDate: end
                                 });
-                                fetchMatrix(
-                                    getLocalISOInputString(new Date(today.setHours(0, 1, 0, 0))),
-                                    getLocalISOInputString(new Date(today.setHours(23, 59, 0, 0)))
-                                );
+                                fetchMatrix(start, end);
                             }}
                         >
                             Reset to Today

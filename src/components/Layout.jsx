@@ -120,9 +120,37 @@ const Layout = () => {
                 overflow: 'hidden',
                 flexShrink: 0
             }}>
-                <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                    <img src="/logo.png" alt="Fadna OMS" style={{ maxWidth: '140px', height: 'auto', marginBottom: '0.5rem' }} />
-                    <div style={{ textAlign: 'center', color: 'var(--text-dim)', fontSize: '0.75rem', lineHeight: '1.4' }}>
+                <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                    <div style={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: '120px',
+                        height: '60px',
+                        background: 'var(--primary)',
+                        filter: 'blur(40px)',
+                        opacity: theme === 'dark' ? 0.15 : 0.05,
+                        borderRadius: '100%',
+                        zIndex: 0,
+                        pointerEvents: 'none'
+                    }} />
+                    <img 
+                        src="/logo.png" 
+                        alt="Fadna OMS" 
+                        style={{ 
+                            maxWidth: '140px', 
+                            height: 'auto', 
+                            marginBottom: '0.5rem',
+                            position: 'relative',
+                            zIndex: 1,
+                            filter: theme === 'dark' 
+                                ? 'drop-shadow(0 0 12px rgba(101, 189, 74, 0.4)) brightness(1.1)' 
+                                : 'drop-shadow(0 0 8px rgba(101, 189, 74, 0.2))',
+                            transition: 'all 0.5s ease'
+                        }} 
+                    />
+                    <div style={{ textAlign: 'center', color: 'var(--text-dim)', fontSize: '0.75rem', lineHeight: '1.4', position: 'relative', zIndex: 1 }}>
                         <div>{formatDate(currentTime)}</div>
                         <div style={{ fontWeight: 'bold', color: 'var(--primary)', fontSize: '0.9rem' }}>{formatTime(currentTime)}</div>
                     </div>

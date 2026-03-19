@@ -379,7 +379,7 @@ const OrderEntry = () => {
                 <div className="card glass">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
                         <h2 style={{ fontSize: '1.25rem', margin: 0 }}>Order Items</h2>
-                        <button type="button" onClick={addItem} className="btn" style={{ background: 'rgba(255,255,255,0.1)' }}>
+                        <button type="button" onClick={addItem} className="btn" style={{ background: '#3b82f6', color: 'white', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
                             <Plus size={16} /> Add Item
                         </button>
                     </div>

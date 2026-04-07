@@ -56,7 +56,7 @@ const Reports = () => {
             setError('Please select both start and end dates.');
             return;
         }
-
+        //swwwwwwwwwwwwwsw
         setLoading(true);
         setError('');
 
@@ -184,11 +184,11 @@ const Reports = () => {
                     </div>
                     <div>
                         <h2 style={{ margin: 0, fontSize: '1.25rem' }}>
-                            {user?.role === 'Agent' ? 'My Monthly Report' : 'Export Orders (Dispatch)'}
+                            {user?.role === 'Agent' || user?.email === 'harshifadna@gmail.com' ? 'Order Report (Read Only)' : 'Export Orders (Dispatch)'}
                         </h2>
                         <p style={{ margin: '0.25rem 0 0', color: 'var(--text-dim)', fontSize: '0.875rem' }}>
-                            {user?.role === 'Agent'
-                                ? 'Download a personal report of your orders. Does not change order status.'
+                            {user?.role === 'Agent' || user?.email === 'harshifadna@gmail.com'
+                                ? 'Download a personal report of orders. Does not change order status.'
                                 : 'Download and dispatch orders within a specific date range.'}
                         </p>
                     </div>
@@ -268,7 +268,7 @@ const Reports = () => {
                 >
                     {loading ? 'Generating Report...' : (
                         <>
-                            <Download size={20} /> {user?.role === 'Agent' ? 'Download My Report' : 'Export & Dispatch'}
+                            <Download size={20} /> {user?.role === 'Agent' || user?.email === 'harshifadna@gmail.com' ? 'Download Report' : 'Export & Dispatch'}
                         </>
                     )}
                 </button>

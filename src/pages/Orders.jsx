@@ -98,31 +98,6 @@ const Orders = () => {
         }
     };
 
-    const handleBulkDelete = async () => {
-        if (user?.role !== 'Super Admin') {
-            alert('Only Super Admin can delete all orders.');
-            return;
-        }
-
-        const password = window.prompt('WARNING: This will delete ALL orders in the system. Enter your password to authorize:');
-        if (!password) return;
-
-        if (window.confirm('Are you ABSOLUTELY sure? This action is IRREVERSIBLE.')) {
-            if (window.confirm('Final confirmation: Delete all orders?')) {
-                try {
-                    setLoading(true);
-                    const { data } = await api.delete('/orders/bulk-delete', { data: { password } });
-                    alert(data.message);
-                    fetchOrders();
-                } catch (err) {
-                    alert(err.response?.data?.message || 'Bulk deletion failed. Check your password.');
-                    console.error(err);
-                } finally {
-                    setLoading(false);
-                }
-            }
-        }
-    };
 
     const handleDeleteSelected = async () => {
         if (!isAdmin) {
@@ -238,15 +213,6 @@ const Orders = () => {
                             style={{ background: 'var(--danger)', color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
                         >
                             <Trash2 size={18} /> Delete Selected ({selectedOrderIds.length})
-                        </button>
-                    )}
-                    {user?.role === 'Super Admin' && (
-                        <button
-                            onClick={handleBulkDelete}
-                            className="btn"
-                            style={{ background: 'var(--danger)', color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-                        >
-                            <Trash2 size={18} /> Delete All Orders
                         </button>
                     )}
                 </div>

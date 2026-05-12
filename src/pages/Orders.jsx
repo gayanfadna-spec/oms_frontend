@@ -12,6 +12,7 @@ const Orders = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [selectedOrderIds, setSelectedOrderIds] = useState([]);
+    const [visibleCount, setVisibleCount] = useState(400);
 
     const fetchOrders = async () => {
         try {
@@ -31,6 +32,7 @@ const Orders = () => {
 
     useEffect(() => {
         setSelectedOrderIds([]);
+        setVisibleCount(400);
     }, [searchTerm]);
 
     const getStatusColor = (status) => {
@@ -247,7 +249,7 @@ const Orders = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredOrders.map(order => (
+                            {filteredOrders.slice(0, visibleCount).map(order => (
                                 <tr key={order._id} style={{
                                     borderBottom: '1px solid var(--glass-border)',
                                     background: (order.editRequest?.pending && user?._id === (order.agent?._id || order.agent)) ? 'rgba(239, 68, 68, 0.25)' : order.isDownloaded ? 'rgba(74, 222, 128, 0.15)' : 'transparent',
@@ -411,6 +413,17 @@ const Orders = () => {
                         </tbody>
                     </table>
                 </div>
+                {visibleCount < filteredOrders.length && (
+                    <div style={{ padding: '1rem', display: 'flex', justifyContent: 'center', borderTop: '1px solid var(--glass-border)' }}>
+                        <button
+                            className="btn btn-primary"
+                            onClick={() => setVisibleCount(prev => prev + 400)}
+                            style={{ padding: '0.5rem 2rem' }}
+                        >
+                            Show More ({filteredOrders.length - visibleCount} remaining)
+                        </button>
+                    </div>
+                )}
             </div>
 
             {/* Customer Details Modal */}

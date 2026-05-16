@@ -9,24 +9,48 @@ const Orders = () => {
     const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const LIMIT = 200;
 
-    const fetchOrders = async () => {
+    const fetchOrders = async (pageNumber = 1, append = false) => {
         try {
-            setLoading(true);
-            const { data } = await api.get('/orders');
-            setOrders(data);
+            if (append) setLoadingMore(true);
+            else setLoading(true);
+
+            const { data } = await api.get(`/orders?page=${pageNumber}&limit=${LIMIT}`);
+            
+            if (append) {
+                setOrders(prev => [...prev, ...data]);
+            } else {
+                setOrders(data);
+            }
+
+            if (data.length < LIMIT) {
+                setHasMore(false);
+            } else {
+                setHasMore(true);
+            }
         } catch (err) {
             console.error("Failed to fetch orders", err);
         } finally {
             setLoading(false);
+            setLoadingMore(false);
         }
     };
 
     useEffect(() => {
-        fetchOrders();
+        fetchOrders(1, false);
     }, []);
+
+    const handleLoadMore = () => {
+        const nextPage = page + 1;
+        setPage(nextPage);
+        fetchOrders(nextPage, true);
+    };
 
     const getStatusColor = (status) => {
         switch (status) {
@@ -78,7 +102,7 @@ const Orders = () => {
             if (data.errorCount > 0) {
                 console.warn("Import errors:", data.errors);
             }
-            fetchOrders();
+            fetchOrders(1, false);
         } catch (err) {
             console.error(err);
             alert(err.response?.data?.message || 'Import failed');
@@ -91,7 +115,7 @@ const Orders = () => {
     const handleStatusChange = async (orderId, newStatus) => {
         try {
             await api.put(`/orders/${orderId}`, { status: newStatus });
-            fetchOrders(); // Refresh to see changes (or update local state optimistically)
+            fetchOrders(1, false); // Refresh to see changes (or update local state optimistically)
         } catch (err) {
             alert(err.response?.data?.message || 'Failed to update status');
         }
@@ -114,7 +138,7 @@ const Orders = () => {
                     setLoading(true);
                     const { data } = await api.delete('/orders/bulk-delete', { data: { password } });
                     alert(data.message);
-                    fetchOrders();
+                    fetchOrders(1, false);
                 } catch (err) {
                     alert(err.response?.data?.message || 'Bulk deletion failed. Check your password.');
                     console.error(err);
@@ -141,7 +165,7 @@ const Orders = () => {
             } catch (err) {
                 alert(err.response?.data?.message || 'Failed to delete order. Check your password.');
                 console.error(err);
-                fetchOrders(); // Revert/Refresh on error
+                fetchOrders(1, false); // Revert/Refresh on error
             }
         }
     };
@@ -152,7 +176,7 @@ const Orders = () => {
             try {
                 await api.post(`/orders/${id}/request-edit`, { message });
                 alert("Edit request sent!");
-                fetchOrders(); // Refresh to show pending status
+                fetchOrders(1, false); // Refresh to show pending status
             } catch (err) {
                 alert(err.response?.data?.message || 'Failed to send request');
             }
@@ -389,6 +413,29 @@ const Orders = () => {
                     </table>
                 </div>
             </div>
+
+            {hasMore && (
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: '2rem', marginBottom: '2rem' }}>
+                    <button
+                        onClick={handleLoadMore}
+                        className="btn btn-primary"
+                        disabled={loadingMore}
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 2rem' }}
+                    >
+                        {loadingMore ? (
+                            <>
+                                <Clock className="animate-spin" size={18} />
+                                Loading...
+                            </>
+                        ) : (
+                            <>
+                                <ChevronDown size={18} />
+                                Load More Orders
+                            </>
+                        )}
+                    </button>
+                </div>
+            )}
 
             {/* Customer Details Modal */}
             {selectedCustomer && (

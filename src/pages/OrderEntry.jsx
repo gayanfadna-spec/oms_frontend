@@ -29,7 +29,7 @@ const OrderEntry = () => {
     const [additionalRemark, setAdditionalRemark] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [deliveryCharge, setDeliveryCharge] = useState(0);
+    const [deliveryCharge, setDeliveryCharge] = useState('');
     const [isManualDelivery, setIsManualDelivery] = useState(false);
 
     // Auto-calculate delivery charge
@@ -180,10 +180,15 @@ const OrderEntry = () => {
 
     const calculateTotal = () => {
         const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-        return Math.max(0, subtotal + deliveryCharge - discountAmount);
+        return Math.max(0, subtotal + Number(deliveryCharge || 0) - Number(discountAmount || 0));
     };
 
     const handleDiscountPercentageChange = (value) => {
+        if (value === '') {
+            setDiscountPercentage('');
+            setDiscountAmount(0);
+            return;
+        }
         const pct = Math.min(100, Math.max(0, Number(value)));
         setDiscountPercentage(pct);
         const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
@@ -191,6 +196,11 @@ const OrderEntry = () => {
     };
 
     const handleDiscountAmountChange = (value) => {
+        if (value === '') {
+            setDiscountAmount('');
+            setDiscountPercentage(0);
+            return;
+        }
         const amt = Math.max(0, Number(value));
         setDiscountAmount(amt);
         const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
@@ -425,17 +435,19 @@ const OrderEntry = () => {
                             <span>Delivery Charge:</span>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                                 <span>+ Rs.</span>
-                                <input
-                                    type="number"
-                                    min="0"
-                                    className="input-field"
-                                    style={{ width: '80px', padding: '0.25rem' }}
-                                    value={deliveryCharge}
-                                    onChange={(e) => {
-                                        setDeliveryCharge(Number(e.target.value));
-                                        setIsManualDelivery(true);
-                                    }}
-                                />
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        className="input-field"
+                                        style={{ width: '80px', padding: '0.25rem' }}
+                                        value={deliveryCharge}
+                                        placeholder="0"
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            setDeliveryCharge(val === '' ? '' : Number(val));
+                                            setIsManualDelivery(true);
+                                        }}
+                                    />
                             </div>
                         </div>
                         <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem', color: 'var(--success)' }}>
@@ -448,6 +460,7 @@ const OrderEntry = () => {
                                     className="input-field"
                                     style={{ width: '80px', padding: '0.25rem' }}
                                     value={discountPercentage}
+                                    placeholder="0"
                                     onChange={(e) => handleDiscountPercentageChange(e.target.value)}
                                 />
                                 <span>%</span>
@@ -463,6 +476,7 @@ const OrderEntry = () => {
                                     className="input-field"
                                     style={{ width: '100px', padding: '0.25rem' }}
                                     value={discountAmount}
+                                    placeholder="0"
                                     onChange={(e) => handleDiscountAmountChange(e.target.value)}
                                 />
                             </div>

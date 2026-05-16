@@ -14,6 +14,7 @@ const Orders = () => {
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
+    const [selectedOrderIds, setSelectedOrderIds] = useState([]);
     const LIMIT = 200;
 
     const fetchOrders = async (pageNumber = 1, append = false) => {
@@ -45,6 +46,10 @@ const Orders = () => {
     useEffect(() => {
         fetchOrders(1, false);
     }, []);
+
+    useEffect(() => {
+        setSelectedOrderIds([]);
+    }, [searchTerm]);
 
     const handleLoadMore = () => {
         const nextPage = page + 1;
@@ -78,11 +83,7 @@ const Orders = () => {
         (order.paymentStatus || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-
-
     const isAdmin = user?.role === 'Admin' || user?.role === 'Super Admin';
-
-    // ... fetchOrders, useEffect ...
 
     const handleFileUpload = async (event) => {
         const file = event.target.files[0];
@@ -122,30 +123,42 @@ const Orders = () => {
     };
 
 
-
-    const handleBulkDelete = async () => {
-        if (user?.role !== 'Super Admin') {
-            alert('Only Super Admin can delete all orders.');
+    const handleDeleteSelected = async () => {
+        if (!isAdmin) {
+            alert('Only Admin or Super Admin can delete orders.');
             return;
         }
 
-        const password = window.prompt('WARNING: This will delete ALL orders in the system. Enter your password to authorize:');
+        const password = window.prompt(`Enter your password to authorize deletion of ${selectedOrderIds.length} orders:`);
         if (!password) return;
 
-        if (window.confirm('Are you ABSOLUTELY sure? This action is IRREVERSIBLE.')) {
-            if (window.confirm('Final confirmation: Delete all orders?')) {
-                try {
-                    setLoading(true);
-                    const { data } = await api.delete('/orders/bulk-delete', { data: { password } });
-                    alert(data.message);
-                    fetchOrders(1, false);
-                } catch (err) {
-                    alert(err.response?.data?.message || 'Bulk deletion failed. Check your password.');
-                    console.error(err);
-                } finally {
-                    setLoading(false);
-                }
+        if (window.confirm(`Are you sure you want to delete ${selectedOrderIds.length} selected orders?`)) {
+            try {
+                setLoading(true);
+                const { data } = await api.delete('/orders/bulk-delete', { data: { password, orderIds: selectedOrderIds } });
+                alert(data.message);
+                setSelectedOrderIds([]);
+                fetchOrders(1, false);
+            } catch (err) {
+                alert(err.response?.data?.message || 'Deletion failed. Check your password.');
+                console.error(err);
+            } finally {
+                setLoading(false);
             }
+        }
+    };
+
+    const toggleSelectOrder = (id) => {
+        setSelectedOrderIds(prev =>
+            prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+        );
+    };
+
+    const toggleSelectAll = () => {
+        if (selectedOrderIds.length === filteredOrders.length && filteredOrders.length > 0) {
+            setSelectedOrderIds([]);
+        } else {
+            setSelectedOrderIds(filteredOrders.map(o => o._id));
         }
     };
 
@@ -217,19 +230,17 @@ const Orders = () => {
                             />
                         </div>
                     )}
-                    {user?.role === 'Super Admin' && (
+                    {isAdmin && selectedOrderIds.length > 0 && (
                         <button
-                            onClick={handleBulkDelete}
+                            onClick={handleDeleteSelected}
                             className="btn"
                             style={{ background: 'var(--danger)', color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
                         >
-                            <Trash2 size={18} /> Delete All Orders
+                            <Trash2 size={18} /> Delete Selected ({selectedOrderIds.length})
                         </button>
                     )}
                 </div>
             </div>
-
-
 
             <div className="card glass" style={{ padding: 0, overflow: 'hidden' }}>
                 <div style={{ overflowX: 'auto' }}>
@@ -247,6 +258,16 @@ const Orders = () => {
                                 <th style={{ padding: '1rem', color: 'var(--text-dim)', fontWeight: 500, fontSize: '0.875rem' }}>Agent</th>
                                 <th style={{ padding: '1rem', color: 'var(--text-dim)', fontWeight: 500, fontSize: '0.875rem' }}>Date & Time</th>
                                 <th style={{ padding: '1rem', color: 'var(--text-dim)', fontWeight: 500, fontSize: '0.875rem' }}>Actions</th>
+                                {isAdmin && (
+                                    <th style={{ padding: '1rem', width: '40px', textAlign: 'center' }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={filteredOrders.length > 0 && selectedOrderIds.length === filteredOrders.length}
+                                            onChange={toggleSelectAll}
+                                            style={{ cursor: 'pointer' }}
+                                        />
+                                    </th>
+                                )}
                             </tr>
                         </thead>
                         <tbody>
@@ -349,14 +370,6 @@ const Orders = () => {
                                         })()}
                                     </td>
                                     <td style={{ padding: '1rem' }}>
-                                        {/* DEBUG: Remove this later */}
-                                        {console.log(`Order ${order._id}:`, {
-                                            userId: user?._id,
-                                            agentId: order.agent?._id,
-                                            agentField: order.agent,
-                                            pending: order.editRequest?.pending,
-                                            match: user?._id === order.agent?._id?.toString()
-                                        })}
                                         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                                             {/* Edit Request Notification for Owner */}
                                             {(order.editRequest?.pending && user?._id === order.agent?._id?.toString()) && (
@@ -407,6 +420,16 @@ const Orders = () => {
                                             )}
                                         </div>
                                     </td>
+                                    {isAdmin && (
+                                        <td style={{ padding: '1rem', textAlign: 'center' }}>
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedOrderIds.includes(order._id)}
+                                                onChange={() => toggleSelectOrder(order._id)}
+                                                style={{ cursor: 'pointer' }}
+                                            />
+                                        </td>
+                                    )}
                                 </tr>
                             ))}
                         </tbody>

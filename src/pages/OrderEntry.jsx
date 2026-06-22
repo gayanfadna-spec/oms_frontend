@@ -35,16 +35,7 @@ const OrderEntry = () => {
     // Auto-calculate delivery charge
     useEffect(() => {
         if (!isManualDelivery && !id) {
-            const subtotal = items.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-            const hasFreeDeliveryItem = items.some(item =>
-                item.productName && item.productName.toLowerCase().includes("moist curl")
-            );
-
-            if (hasFreeDeliveryItem) {
-                setDeliveryCharge(0);
-            } else {
-                setDeliveryCharge((subtotal < 2500 && subtotal > 0) ? 350 : 0);
-            }
+            setDeliveryCharge(0);
         }
     }, [items, isManualDelivery, id]);
 

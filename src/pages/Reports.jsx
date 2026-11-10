@@ -92,7 +92,7 @@ const Reports = () => {
 
             // Convert JSON to CSV
             const headers = [
-                'Date', 'Time', 'Product', 'Remark', 'Subtotal (Rs.)', 'Discount (Rs.)', 'Delivery (Rs.)', 'Total (Rs.)', 'Customer Name', 'Address', 'City', 'Country',
+                'Date', 'Time', 'Product', 'Remark', 'Free Issue', 'Exchange', 'Subtotal (Rs.)', 'Discount (Rs.)', 'Delivery (Rs.)', 'Total (Rs.)', 'Customer Name', 'Address', 'City', 'Country',
                 'Contact 1', 'Contact 2', 'Qty', 'Payment Status',
                 'Items Detail', 'Additional Remark', 'Agent'
             ];
@@ -115,11 +115,16 @@ const Reports = () => {
                 const dateStr = `${pad(createdAt.getDate())}/${pad(createdAt.getMonth() + 1)}/${createdAt.getFullYear()}`;
                 const timeStr = `${pad(createdAt.getHours())}:${pad(createdAt.getMinutes())}:${pad(createdAt.getSeconds())}`;
 
+                const isFreeIssue = Boolean(order.isFreeIssue || order.freeIssue);
+                const isExchange = Boolean(order.isExchange || order.exchange);
+
                 const row = [
                     `"${dateStr}"`,
                     `"${timeStr}"`,
                     `"${productNames.replace(/"/g, '""')}"`,
                     `"${(order.remark || '').replace(/"/g, '""')}"`,
+                    `"${isFreeIssue ? 'Yes' : 'No'}"`,
+                    `"${isExchange ? 'Yes' : 'No'}"`,
                     order.totalAmount || 0,
                     order.discountAmount || 0,
                     order.deliveryCharge || 0,

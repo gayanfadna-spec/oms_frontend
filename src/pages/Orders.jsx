@@ -2,7 +2,11 @@ import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 import AuthContext from '../context/AuthContext';
-import { Search, Filter, ChevronDown, CheckCircle, XCircle, Clock, Truck, Package, Edit, Trash2, Upload, MessageCircle, MapPin } from 'lucide-react';
+import {
+    Search, Filter, ChevronDown, CheckCircle, XCircle, Clock, Truck,
+    Package, Edit, Trash2, Upload, MessageCircle, MapPin, Eye,
+    Printer, Copy, Check, ShoppingBag, DollarSign, Calendar, User, FileText, Phone, Mail
+} from 'lucide-react';
 
 const Orders = () => {
     const { user } = useContext(AuthContext);
@@ -13,6 +17,8 @@ const Orders = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [agentFilter, setAgentFilter] = useState('');
     const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [copiedId, setCopiedId] = useState(false);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [selectedOrderIds, setSelectedOrderIds] = useState([]);
@@ -83,7 +89,9 @@ const Orders = () => {
             (order.customer?.phone || '').includes(searchTerm) ||
             order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
             (order.remark || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-            (order.paymentStatus || '').toLowerCase().includes(searchTerm.toLowerCase());
+            (order.paymentStatus || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (order.isFreeIssue && 'free issue'.includes(searchTerm.toLowerCase())) ||
+            (order.isExchange && 'exchange'.includes(searchTerm.toLowerCase()));
             
         const matchesAgent = agentFilter ? order.agent?.name === agentFilter : true;
         
@@ -203,6 +211,22 @@ const Orders = () => {
         }
     };
 
+    const handleOpenOrderDetails = async (order) => {
+        setSelectedOrder(order);
+        try {
+            const { data } = await api.get(`/orders/${order._id}`);
+            setSelectedOrder(data);
+        } catch (err) {
+            console.error("Failed to fetch fresh order details", err);
+        }
+    };
+
+    const handleCopyId = (text) => {
+        navigator.clipboard.writeText(text);
+        setCopiedId(true);
+        setTimeout(() => setCopiedId(false), 2000);
+    };
+
     if (loading) return <div>Loading...</div>;
 
     return (
@@ -307,24 +331,65 @@ const Orders = () => {
                         </thead>
                         <tbody>
                             {filteredOrders.map(order => (
-                                <tr key={order._id} style={{
-                                    borderBottom: '1px solid var(--glass-border)',
-                                    background: (order.editRequest?.pending && user?._id === (order.agent?._id || order.agent)) ? 'rgba(239, 68, 68, 0.25)' : order.isDownloaded ? 'rgba(74, 222, 128, 0.15)' : 'transparent',
-                                    borderLeft: (order.editRequest?.pending && user?._id === (order.agent?._id || order.agent)) ? '4px solid #ef4444' : order.isDownloaded ? '4px solid var(--success)' : '4px solid transparent'
-                                }}>
+                                <tr
+                                    key={order._id}
+                                    className="order-table-row"
+                                    onClick={() => handleOpenOrderDetails(order)}
+                                    title="Click to view full order details"
+                                    style={{
+                                        borderBottom: '1px solid var(--glass-border)',
+                                        background: (order.editRequest?.pending && user?._id === (order.agent?._id || order.agent)) ? 'rgba(239, 68, 68, 0.25)' : order.isDownloaded ? 'rgba(74, 222, 128, 0.15)' : 'transparent',
+                                        borderLeft: (order.editRequest?.pending && user?._id === (order.agent?._id || order.agent)) ? '4px solid #ef4444' : order.isDownloaded ? '4px solid var(--success)' : '4px solid transparent',
+                                        cursor: 'pointer'
+                                    }}
+                                >
                                     <td style={{ padding: '1rem', fontFamily: 'monospace' }}>
-                                        #{order._id.slice(-6).toUpperCase()}
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); handleOpenOrderDetails(order); }}
+                                            style={{
+                                                background: 'rgba(101, 189, 74, 0.12)',
+                                                border: '1px solid rgba(101, 189, 74, 0.3)',
+                                                color: 'var(--primary)',
+                                                borderRadius: '0.375rem',
+                                                padding: '0.25rem 0.5rem',
+                                                fontFamily: 'monospace',
+                                                fontWeight: 700,
+                                                fontSize: '0.85rem',
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: '0.35rem',
+                                                cursor: 'pointer'
+                                            }}
+                                            title="Click to view full order details"
+                                        >
+                                            <Eye size={13} />
+                                            #{order._id.slice(-6).toUpperCase()}
+                                        </button>
                                         {order.isDownloaded && (
                                             <div style={{ fontSize: '0.7rem', color: 'var(--success)', marginTop: '0.25rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                                                 <CheckCircle size={12} /> Downloaded
+                                            </div>
+                                        )}
+                                        {(order.isFreeIssue || order.isExchange) && (
+                                            <div style={{ display: 'flex', gap: '0.25rem', marginTop: '0.35rem', flexWrap: 'wrap' }}>
+                                                {order.isFreeIssue && (
+                                                    <span style={{ fontSize: '0.65rem', padding: '0.1rem 0.4rem', borderRadius: '4px', background: 'rgba(96, 165, 250, 0.2)', color: '#60a5fa', fontWeight: 'bold' }}>
+                                                        FREE ISSUE
+                                                    </span>
+                                                )}
+                                                {order.isExchange && (
+                                                    <span style={{ fontSize: '0.65rem', padding: '0.1rem 0.4rem', borderRadius: '4px', background: 'rgba(245, 158, 11, 0.2)', color: '#f59e0b', fontWeight: 'bold' }}>
+                                                        EXCHANGE
+                                                    </span>
+                                                )}
                                             </div>
                                         )}
                                     </td>
                                     <td style={{ padding: '1rem' }}>
                                         <div
                                             style={{ fontWeight: 'bold', cursor: 'pointer', color: 'var(--primary)' }}
-                                            onClick={() => setSelectedCustomer(order.customer)}
-                                            title="View Customer Details"
+                                            onClick={(e) => { e.stopPropagation(); setSelectedCustomer(order.customer); }}
+                                            title="View Customer Profile"
                                         >
                                             {order.customer?.name || 'Unknown'}
                                         </div>
@@ -366,7 +431,7 @@ const Orders = () => {
                                             {order.paymentStatus || 'COD'}
                                         </span>
                                     </td>
-                                    <td style={{ padding: '1rem' }}>
+                                    <td style={{ padding: '1rem' }} onClick={(e) => e.stopPropagation()}>
                                         {isAdmin ? (
                                             <select
                                                 className={`input-field ${getStatusColor(order.status)}`}
@@ -404,8 +469,18 @@ const Orders = () => {
                                             );
                                         })()}
                                     </td>
-                                    <td style={{ padding: '1rem' }}>
+                                    <td style={{ padding: '1rem' }} onClick={(e) => e.stopPropagation()}>
                                         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                                            {/* View Full Details Button */}
+                                            <button
+                                                onClick={() => handleOpenOrderDetails(order)}
+                                                className="btn"
+                                                style={{ padding: '0.25rem', background: 'transparent', color: 'var(--primary)' }}
+                                                title="View Full Order Details"
+                                            >
+                                                <Eye size={18} />
+                                            </button>
+
                                             {/* Edit Request Notification for Owner */}
                                             {(order.editRequest?.pending && user?._id === order.agent?._id?.toString()) && (
                                                 <div
@@ -456,7 +531,7 @@ const Orders = () => {
                                         </div>
                                     </td>
                                     {isAdmin && (
-                                        <td style={{ padding: '1rem', textAlign: 'center' }}>
+                                        <td style={{ padding: '1rem', textAlign: 'center' }} onClick={(e) => e.stopPropagation()}>
                                             <input
                                                 type="checkbox"
                                                 checked={selectedOrderIds.includes(order._id)}
@@ -585,6 +660,453 @@ const Orders = () => {
                         >
                             Close Details
                         </button>
+                    </div>
+                </div>
+            )}
+
+            {/* Order Full Details Modal */}
+            {selectedOrder && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    background: 'rgba(0, 0, 0, 0.75)',
+                    backdropFilter: 'blur(5px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000,
+                    padding: '1rem'
+                }} onClick={() => setSelectedOrder(null)}>
+                    <div
+                        id="order-details-printable"
+                        className="card glass"
+                        style={{
+                            maxWidth: '850px',
+                            width: '100%',
+                            maxHeight: '92vh',
+                            overflowY: 'auto',
+                            position: 'relative',
+                            padding: '2rem',
+                            borderRadius: '1rem'
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Close Button */}
+                        <button
+                            className="no-print"
+                            onClick={() => setSelectedOrder(null)}
+                            style={{
+                                position: 'absolute',
+                                top: '1.25rem',
+                                right: '1.25rem',
+                                background: 'transparent',
+                                color: 'var(--text-dim)',
+                                cursor: 'pointer',
+                                padding: '0.25rem'
+                            }}
+                            title="Close"
+                        >
+                            <XCircle size={24} />
+                        </button>
+
+                        {/* Modal Header */}
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'flex-start',
+                            flexWrap: 'wrap',
+                            gap: '1rem',
+                            paddingBottom: '1.5rem',
+                            borderBottom: '1px solid var(--glass-border)',
+                            marginBottom: '1.5rem'
+                        }}>
+                            <div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                                    <h2 style={{ margin: 0, fontSize: '1.4rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                        <Package size={24} style={{ color: 'var(--primary)' }} />
+                                        Order Details
+                                        <span style={{ color: 'var(--primary)', fontFamily: 'monospace' }}>
+                                            #{selectedOrder._id.slice(-6).toUpperCase()}
+                                        </span>
+                                    </h2>
+                                    {/* Copy Full Mongo ID */}
+                                    <button
+                                        className="no-print"
+                                        onClick={() => handleCopyId(selectedOrder._id)}
+                                        style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '0.25rem',
+                                            background: 'rgba(255, 255, 255, 0.08)',
+                                            border: '1px solid var(--glass-border)',
+                                            color: 'var(--text-dim)',
+                                            padding: '0.2rem 0.5rem',
+                                            borderRadius: '0.375rem',
+                                            fontSize: '0.75rem',
+                                            cursor: 'pointer',
+                                            fontFamily: 'monospace'
+                                        }}
+                                        title="Copy full Mongo ID"
+                                    >
+                                        {copiedId ? <Check size={12} style={{ color: 'var(--success)' }} /> : <Copy size={12} />}
+                                        {copiedId ? 'Copied ID' : selectedOrder._id}
+                                    </button>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.5rem', fontSize: '0.85rem', color: 'var(--text-dim)', flexWrap: 'wrap' }}>
+                                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                                        <Calendar size={14} />
+                                        {new Date(selectedOrder.createdAt).toLocaleString()}
+                                    </span>
+                                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                                        <User size={14} />
+                                        Agent: <strong style={{ color: 'var(--text-main)' }}>{selectedOrder.agent?.name || 'Unknown'}</strong>
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Status Badges */}
+                            <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                                <span className={`px-2 py-1 rounded text-xs font-semibold ${getStatusColor(selectedOrder.status)}`}
+                                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', padding: '0.35rem 0.75rem', borderRadius: '9999px', fontSize: '0.8rem' }}>
+                                    <StatusIcon status={selectedOrder.status} />
+                                    {selectedOrder.status}
+                                </span>
+                                <span style={{
+                                    padding: '0.35rem 0.75rem',
+                                    borderRadius: '9999px',
+                                    fontSize: '0.8rem',
+                                    fontWeight: 600,
+                                    background: selectedOrder.paymentStatus === 'Paid' ? 'rgba(74, 222, 128, 0.15)' : selectedOrder.paymentStatus === 'Export' ? 'rgba(96, 165, 250, 0.15)' : 'rgba(250, 204, 21, 0.15)',
+                                    color: selectedOrder.paymentStatus === 'Paid' ? '#4ade80' : selectedOrder.paymentStatus === 'Export' ? '#60a5fa' : '#facc15'
+                                }}>
+                                    Payment: {selectedOrder.paymentStatus || 'COD'}
+                                </span>
+                                {selectedOrder.isDownloaded && (
+                                    <span style={{
+                                        padding: '0.35rem 0.75rem',
+                                        borderRadius: '9999px',
+                                        fontSize: '0.8rem',
+                                        fontWeight: 600,
+                                        background: 'rgba(74, 222, 128, 0.15)',
+                                        color: '#4ade80',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '0.25rem'
+                                    }}>
+                                        <CheckCircle size={12} /> Exported
+                                    </span>
+                                )}
+                                {selectedOrder.isFreeIssue && (
+                                    <span style={{
+                                        padding: '0.35rem 0.75rem',
+                                        borderRadius: '9999px',
+                                        fontSize: '0.8rem',
+                                        fontWeight: 600,
+                                        background: 'rgba(96, 165, 250, 0.2)',
+                                        color: '#60a5fa'
+                                    }}>
+                                        Free Issue
+                                    </span>
+                                )}
+                                {selectedOrder.isExchange && (
+                                    <span style={{
+                                        padding: '0.35rem 0.75rem',
+                                        borderRadius: '9999px',
+                                        fontSize: '0.8rem',
+                                        fontWeight: 600,
+                                        background: 'rgba(245, 158, 11, 0.2)',
+                                        color: '#f59e0b'
+                                    }}>
+                                        Exchange
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Edit Alert (if pending) */}
+                        {selectedOrder.editRequest?.pending && (
+                            <div style={{
+                                background: 'rgba(239, 68, 68, 0.1)',
+                                border: '1px solid rgba(239, 68, 68, 0.3)',
+                                color: '#ef4444',
+                                padding: '0.75rem 1rem',
+                                borderRadius: '0.5rem',
+                                marginBottom: '1.5rem',
+                                fontSize: '0.875rem'
+                            }}>
+                                <strong>Edit Request Pending:</strong> {selectedOrder.editRequest.message}
+                                {selectedOrder.editRequest.from?.name && <span> (Requested by: {selectedOrder.editRequest.from.name})</span>}
+                            </div>
+                        )}
+
+                        {/* Two Column Section: Customer & Notes */}
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+                            gap: '1.25rem',
+                            marginBottom: '1.5rem'
+                        }}>
+                            {/* Customer Details Box */}
+                            <div style={{
+                                background: 'var(--bg-dark)',
+                                border: '1px solid var(--glass-border)',
+                                borderRadius: '0.75rem',
+                                padding: '1.25rem'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+                                    <div style={{
+                                        width: '42px',
+                                        height: '42px',
+                                        borderRadius: '50%',
+                                        background: 'var(--primary)',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        fontWeight: 'bold',
+                                        color: 'white',
+                                        fontSize: '1.1rem'
+                                    }}>
+                                        {selectedOrder.customer?.name?.charAt(0).toUpperCase() || 'C'}
+                                    </div>
+                                    <div>
+                                        <div style={{ fontWeight: 600, fontSize: '1rem' }}>
+                                            {selectedOrder.customer?.name || 'Customer Name Unavailable'}
+                                        </div>
+                                        <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Customer Profile</div>
+                                    </div>
+                                </div>
+
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', fontSize: '0.875rem' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                        <Phone size={15} style={{ color: 'var(--primary)' }} />
+                                        <span>Primary Phone: <strong>{selectedOrder.customer?.phone || '-'}</strong></span>
+                                    </div>
+                                    {selectedOrder.customer?.phone2 && (
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                            <Phone size={15} style={{ color: 'var(--text-dim)' }} />
+                                            <span>Secondary Phone: <strong>{selectedOrder.customer.phone2}</strong></span>
+                                        </div>
+                                    )}
+                                    {selectedOrder.customer?.email && (
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                            <Mail size={15} style={{ color: 'var(--primary)' }} />
+                                            <span>Email: <strong>{selectedOrder.customer.email}</strong></span>
+                                        </div>
+                                    )}
+                                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.5rem', marginTop: '0.25rem' }}>
+                                        <MapPin size={16} style={{ color: 'var(--primary)', marginTop: '0.15rem', flexShrink: 0 }} />
+                                        <div>
+                                            <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Delivery Address:</div>
+                                            <div style={{ fontWeight: 500 }}>
+                                                {selectedOrder.customer?.address || '-'}
+                                                {selectedOrder.customer?.city ? `, ${selectedOrder.customer.city}` : ''}
+                                                {selectedOrder.customer?.country ? `, ${selectedOrder.customer.country}` : ''}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Order Notes & Edit History Box */}
+                            <div style={{
+                                background: 'var(--bg-dark)',
+                                border: '1px solid var(--glass-border)',
+                                borderRadius: '0.75rem',
+                                padding: '1.25rem'
+                            }}>
+                                <div style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                    <FileText size={18} style={{ color: 'var(--primary)' }} />
+                                    Order Notes & Remarks
+                                </div>
+
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.875rem' }}>
+                                    <div>
+                                        <span style={{ color: 'var(--text-dim)', fontSize: '0.75rem', display: 'block' }}>Primary Remark:</span>
+                                        <div style={{ fontWeight: 500, marginTop: '0.15rem' }}>
+                                            {selectedOrder.remark || <span style={{ color: 'var(--text-dim)', fontStyle: 'italic' }}>None</span>}
+                                        </div>
+                                    </div>
+
+                                    {selectedOrder.additionalRemark && (
+                                        <div>
+                                            <span style={{ color: 'var(--text-dim)', fontSize: '0.75rem', display: 'block' }}>Additional Remark:</span>
+                                            <div style={{ fontWeight: 500, marginTop: '0.15rem' }}>
+                                                {selectedOrder.additionalRemark}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {selectedOrder.editedBy && selectedOrder.editedBy.length > 0 && (
+                                        <div style={{ borderTop: '1px solid var(--glass-border)', paddingTop: '0.5rem', marginTop: '0.25rem' }}>
+                                            <span style={{ color: 'var(--text-dim)', fontSize: '0.75rem', display: 'block' }}>Modification History:</span>
+                                            {selectedOrder.editedBy.map((edit, idx) => (
+                                                <div key={idx} style={{ fontSize: '0.75rem', color: 'var(--text-dim)', marginTop: '0.25rem' }}>
+                                                    Updated by <strong style={{ color: 'var(--text-main)' }}>{edit.agent?.name || 'Agent'}</strong> on {new Date(edit.at).toLocaleString()}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Order Items Table */}
+                        <div style={{ marginBottom: '1.5rem' }}>
+                            <div style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                <ShoppingBag size={18} style={{ color: 'var(--primary)' }} />
+                                Ordered Products ({selectedOrder.items?.length || 0})
+                            </div>
+
+                            <div style={{
+                                overflowX: 'auto',
+                                border: '1px solid var(--glass-border)',
+                                borderRadius: '0.75rem',
+                                background: 'var(--bg-dark)'
+                            }}>
+                                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
+                                    <thead>
+                                        <tr style={{ borderBottom: '1px solid var(--glass-border)', background: 'rgba(0,0,0,0.05)' }}>
+                                            <th style={{ padding: '0.75rem 1rem', color: 'var(--text-dim)', fontWeight: 600 }}>#</th>
+                                            <th style={{ padding: '0.75rem 1rem', color: 'var(--text-dim)', fontWeight: 600 }}>Product Name</th>
+                                            <th style={{ padding: '0.75rem 1rem', color: 'var(--text-dim)', fontWeight: 600, textAlign: 'center' }}>Qty</th>
+                                            <th style={{ padding: '0.75rem 1rem', color: 'var(--text-dim)', fontWeight: 600, textAlign: 'right' }}>Unit Price</th>
+                                            <th style={{ padding: '0.75rem 1rem', color: 'var(--text-dim)', fontWeight: 600, textAlign: 'right' }}>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {selectedOrder.items?.map((item, idx) => (
+                                            <tr key={idx} style={{ borderBottom: idx < selectedOrder.items.length - 1 ? '1px solid var(--glass-border)' : 'none' }}>
+                                                <td style={{ padding: '0.75rem 1rem', color: 'var(--text-dim)', width: '40px' }}>{idx + 1}</td>
+                                                <td style={{ padding: '0.75rem 1rem', fontWeight: 500 }}>{item.productName}</td>
+                                                <td style={{ padding: '0.75rem 1rem', textAlign: 'center' }}>
+                                                    <span style={{
+                                                        background: 'rgba(255,255,255,0.08)',
+                                                        padding: '0.2rem 0.6rem',
+                                                        borderRadius: '0.25rem',
+                                                        fontWeight: 600
+                                                    }}>
+                                                        {item.quantity}
+                                                    </span>
+                                                </td>
+                                                <td style={{ padding: '0.75rem 1rem', textAlign: 'right' }}>Rs. {item.price?.toFixed(2)}</td>
+                                                <td style={{ padding: '0.75rem 1rem', textAlign: 'right', fontWeight: 600 }}>
+                                                    Rs. {(item.price * item.quantity).toFixed(2)}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        {/* Financial Summary */}
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            marginBottom: '1.5rem'
+                        }}>
+                            <div style={{
+                                width: '100%',
+                                maxWidth: '380px',
+                                background: 'var(--bg-dark)',
+                                border: '1px solid var(--glass-border)',
+                                borderRadius: '0.75rem',
+                                padding: '1rem 1.25rem'
+                            }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.35rem 0', fontSize: '0.875rem' }}>
+                                    <span style={{ color: 'var(--text-dim)' }}>Subtotal:</span>
+                                    <span>Rs. {selectedOrder.totalAmount?.toFixed(2)}</span>
+                                </div>
+
+                                <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.35rem 0', fontSize: '0.875rem' }}>
+                                    <span style={{ color: 'var(--text-dim)' }}>Delivery Charge:</span>
+                                    <span>Rs. {(selectedOrder.deliveryCharge || 0).toFixed(2)}</span>
+                                </div>
+
+                                {selectedOrder.discountAmount > 0 && (
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0.35rem 0', fontSize: '0.875rem', color: 'var(--success)' }}>
+                                        <span>Discount:</span>
+                                        <span>- Rs. {selectedOrder.discountAmount?.toFixed(2)}</span>
+                                    </div>
+                                )}
+
+                                <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    paddingTop: '0.75rem',
+                                    marginTop: '0.5rem',
+                                    borderTop: '2px solid var(--glass-border)',
+                                    fontSize: '1.15rem',
+                                    fontWeight: 'bold'
+                                }}>
+                                    <span>Final Total:</span>
+                                    <span style={{ color: 'var(--primary)' }}>
+                                        Rs. {selectedOrder.finalAmount?.toFixed(2)}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Modal Actions Footer */}
+                        <div className="no-print" style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            flexWrap: 'wrap',
+                            gap: '1rem',
+                            paddingTop: '1.25rem',
+                            borderTop: '1px solid var(--glass-border)'
+                        }}>
+                            <button
+                                onClick={() => window.print()}
+                                className="btn"
+                                style={{
+                                    background: 'transparent',
+                                    border: '1px solid var(--glass-border)',
+                                    color: 'var(--text-main)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    padding: '0.6rem 1.25rem'
+                                }}
+                            >
+                                <Printer size={18} /> Print Order
+                            </button>
+
+                            <div style={{ display: 'flex', gap: '0.75rem' }}>
+                                {(user?.role === 'Admin' || user?.role === 'Super Admin' || user?._id === (selectedOrder.agent?._id || selectedOrder.agent)?.toString()) && (
+                                    <button
+                                        onClick={() => {
+                                            const id = selectedOrder._id;
+                                            setSelectedOrder(null);
+                                            navigate(`/order/edit/${id}`);
+                                        }}
+                                        className="btn"
+                                        style={{
+                                            background: 'transparent',
+                                            border: '1px solid var(--primary)',
+                                            color: 'var(--primary)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.5rem',
+                                            padding: '0.6rem 1.25rem'
+                                        }}
+                                    >
+                                        <Edit size={18} /> Edit Order
+                                    </button>
+                                )}
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={() => setSelectedOrder(null)}
+                                    style={{ padding: '0.6rem 1.75rem' }}
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}

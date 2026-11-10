@@ -214,3 +214,34 @@ button {
 @keyframes spinner {
   to { transform: rotate(360deg); }
 }
+
+.order-table-row {
+  transition: background-color 0.15s ease;
+}
+
+.order-table-row:hover {
+  background-color: rgba(101, 189, 74, 0.08) !important;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #order-details-printable, #order-details-printable * {
+    visibility: visible;
+  }
+  #order-details-printable {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 1.5rem;
+    background: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

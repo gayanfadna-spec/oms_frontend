@@ -13,9 +13,9 @@ const SantaSleigh = () => {
         return () => window.removeEventListener('christmas-snow-change', handleSnowChange);
     }, []);
 
-    // Periodic flight at constant uniform speed
-    const FLIGHT_DURATION = 16; // seconds across the screen
-    const REST_DURATION = 8;   // seconds break before next flight
+    // Periodic flight at constant uniform speed (faster pace)
+    const FLIGHT_DURATION = 25; // seconds across the screen (fast constant speed)
+    const REST_DURATION = 15;   // seconds break before next flight
 
     useEffect(() => {
         if (!active) return;
@@ -54,7 +54,7 @@ const SantaSleigh = () => {
             <div style={{
                 display: 'flex',
                 alignItems: 'center',
-                animation: 'santaBobbing 2s ease-in-out infinite alternate',
+                animation: 'santaBobbing 1.1s ease-in-out infinite alternate',
                 filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.35))'
             }}>
                 {/* Magic Star Trail */}

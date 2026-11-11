@@ -16,6 +16,8 @@ const Orders = () => {
     const [loadingMore, setLoadingMore] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [agentFilter, setAgentFilter] = useState('');
+    const [markFilter, setMarkFilter] = useState('ALL');
+    const [statusFilter, setStatusFilter] = useState('ALL');
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [copiedId, setCopiedId] = useState(false);
@@ -84,6 +86,9 @@ const Orders = () => {
 
     const uniqueAgents = [...new Set(orders.map(order => order.agent?.name).filter(Boolean))];
 
+    const freeIssueCount = orders.filter(o => o.isFreeIssue).length;
+    const exchangeCount = orders.filter(o => o.isExchange).length;
+
     const filteredOrders = orders.filter(order => {
         const matchesSearch = (order.customer?.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
             (order.customer?.phone || '').includes(searchTerm) ||
@@ -95,7 +100,19 @@ const Orders = () => {
             
         const matchesAgent = agentFilter ? order.agent?.name === agentFilter : true;
         
-        return matchesSearch && matchesAgent;
+        const matchesMark = markFilter === 'ALL'
+            ? true
+            : markFilter === 'FREE_ISSUE'
+                ? Boolean(order.isFreeIssue)
+                : markFilter === 'EXCHANGE'
+                    ? Boolean(order.isExchange)
+                    : true;
+
+        const matchesStatus = statusFilter === 'ALL'
+            ? true
+            : order.status === statusFilter;
+
+        return matchesSearch && matchesAgent && matchesMark && matchesStatus;
     });
 
     const isAdmin = user?.role === 'Admin' || user?.role === 'Super Admin';
@@ -268,6 +285,136 @@ const Orders = () => {
                             style={{ background: 'var(--danger)', color: 'white', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
                         >
                             <Trash2 size={18} /> Delete Selected ({selectedOrderIds.length})
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {/* Filter Tabs Toolbar */}
+            <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '1rem',
+                marginBottom: '1.25rem',
+                padding: '0.6rem 1rem',
+                background: 'var(--bg-card)',
+                borderRadius: '0.75rem',
+                border: '1px solid var(--glass-border)'
+            }}>
+                {/* Order Mark Filters: All, Free Issue, Exchange */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-dim)', marginRight: '0.25rem' }}>Type:</span>
+                    <button
+                        onClick={() => setMarkFilter('ALL')}
+                        style={{
+                            padding: '0.35rem 0.85rem',
+                            borderRadius: '9999px',
+                            fontSize: '0.8rem',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            background: markFilter === 'ALL' ? 'var(--primary)' : 'transparent',
+                            color: markFilter === 'ALL' ? '#ffffff' : 'var(--text-dim)',
+                            border: markFilter === 'ALL' ? 'none' : '1px solid var(--glass-border)',
+                            transition: 'all 0.2s'
+                        }}
+                    >
+                        All ({orders.length})
+                    </button>
+
+                    <button
+                        onClick={() => setMarkFilter('FREE_ISSUE')}
+                        style={{
+                            padding: '0.35rem 0.85rem',
+                            borderRadius: '9999px',
+                            fontSize: '0.8rem',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            background: markFilter === 'FREE_ISSUE' ? '#3b82f6' : 'rgba(59, 130, 246, 0.1)',
+                            color: markFilter === 'FREE_ISSUE' ? '#ffffff' : '#60a5fa',
+                            border: '1px solid rgba(59, 130, 246, 0.3)',
+                            transition: 'all 0.2s',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.35rem'
+                        }}
+                    >
+                        <span>Free Issue</span>
+                        <span style={{
+                            background: markFilter === 'FREE_ISSUE' ? 'rgba(255,255,255,0.25)' : 'rgba(59, 130, 246, 0.2)',
+                            padding: '0.1rem 0.4rem',
+                            borderRadius: '9999px',
+                            fontSize: '0.7rem'
+                        }}>
+                            {freeIssueCount}
+                        </span>
+                    </button>
+
+                    <button
+                        onClick={() => setMarkFilter('EXCHANGE')}
+                        style={{
+                            padding: '0.35rem 0.85rem',
+                            borderRadius: '9999px',
+                            fontSize: '0.8rem',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            background: markFilter === 'EXCHANGE' ? '#f59e0b' : 'rgba(245, 158, 11, 0.1)',
+                            color: markFilter === 'EXCHANGE' ? '#ffffff' : '#f59e0b',
+                            border: '1px solid rgba(245, 158, 11, 0.3)',
+                            transition: 'all 0.2s',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '0.35rem'
+                        }}
+                    >
+                        <span>Exchange</span>
+                        <span style={{
+                            background: markFilter === 'EXCHANGE' ? 'rgba(255,255,255,0.25)' : 'rgba(245, 158, 11, 0.2)',
+                            padding: '0.1rem 0.4rem',
+                            borderRadius: '9999px',
+                            fontSize: '0.7rem'
+                        }}>
+                            {exchangeCount}
+                        </span>
+                    </button>
+                </div>
+
+                {/* Status Filter */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-dim)', marginRight: '0.25rem' }}>Status:</span>
+                    {['ALL', 'Pending', 'Dispatched', 'Returned'].map(st => (
+                        <button
+                            key={st}
+                            onClick={() => setStatusFilter(st)}
+                            style={{
+                                padding: '0.3rem 0.75rem',
+                                borderRadius: '9999px',
+                                fontSize: '0.8rem',
+                                fontWeight: 500,
+                                cursor: 'pointer',
+                                background: statusFilter === st ? 'var(--text-light)' : 'transparent',
+                                color: statusFilter === st ? 'var(--bg-dark)' : 'var(--text-dim)',
+                                border: statusFilter === st ? 'none' : '1px solid var(--glass-border)',
+                                transition: 'all 0.2s'
+                            }}
+                        >
+                            {st === 'ALL' ? 'All' : st}
+                        </button>
+                    ))}
+                    {(markFilter !== 'ALL' || statusFilter !== 'ALL') && (
+                        <button
+                            onClick={() => { setMarkFilter('ALL'); setStatusFilter('ALL'); }}
+                            style={{
+                                padding: '0.3rem 0.6rem',
+                                fontSize: '0.75rem',
+                                background: 'transparent',
+                                color: 'var(--danger)',
+                                cursor: 'pointer'
+                            }}
+                            title="Reset filters"
+                        >
+                            Reset
                         </button>
                     )}
                 </div>

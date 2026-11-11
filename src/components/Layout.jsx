@@ -23,7 +23,7 @@ const Layout = () => {
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [currentTime, setCurrentTime] = useState(new Date());
-    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
     const [snowOn, setSnowOn] = useState(getChristmasSnowState);
 
     const handleToggleSnow = () => {
@@ -71,7 +71,7 @@ const Layout = () => {
     };
 
     const toggleTheme = () => {
-        setTheme(theme === 'light' ? 'dark' : 'light');
+        setTheme(theme === 'dark' ? 'light' : 'dark');
     };
 
     const navItems = [

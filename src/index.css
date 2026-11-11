@@ -245,3 +245,64 @@ button {
     display: none !important;
   }
 }
+
+/* Santa Sleigh & Reindeer Flight Animations */
+@keyframes santaFlyAcross {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(100vw + 420px));
+  }
+}
+
+@keyframes santaBobbing {
+  0% {
+    transform: translateY(0px) rotate(1.5deg);
+  }
+  50% {
+    transform: translateY(-14px) rotate(-1.5deg);
+  }
+  100% {
+    transform: translateY(6px) rotate(2deg);
+  }
+}
+
+@keyframes magicSparkle {
+  0% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes santaSpeech {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+.rudolph-glow {
+  transform-origin: 66px 12px;
+  animation: rudolphNosePulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes rudolphNosePulse {
+  0% {
+    opacity: 0.25;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 0.8;
+    transform: scale(1.5);
+  }
+}
+

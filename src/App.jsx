@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import AuthContext from './context/AuthContext';
 import Layout from './components/Layout';
 import SnowEffect from './components/SnowEffect';
+import SantaSleigh from './components/SantaSleigh';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 
@@ -26,6 +27,7 @@ function App() {
   return (
     <>
       <SnowEffect />
+      <SantaSleigh />
       <Routes>
       <Route path="/login" element={<Login />} />
 

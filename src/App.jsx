@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useContext } from 'react';
 import AuthContext from './context/AuthContext';
 import Layout from './components/Layout';
+import SnowEffect from './components/SnowEffect';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 
@@ -23,7 +24,9 @@ const ProtectedRoute = ({ children }) => {
 
 function App() {
   return (
-    <Routes>
+    <>
+      <SnowEffect />
+      <Routes>
       <Route path="/login" element={<Login />} />
 
       <Route path="/" element={<Navigate to="/login" replace />} />
@@ -44,6 +47,7 @@ function App() {
         <Route path="reports" element={<Reports />} />
       </Route>
     </Routes>
+    </>
   );
 }
 

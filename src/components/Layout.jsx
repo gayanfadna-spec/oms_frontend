@@ -1,7 +1,8 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import api from '../api/axios';
+import { toggleChristmasSnow, getChristmasSnowState } from './SnowEffect';
 import {
     LayoutDashboard,
     PlusCircle,
@@ -16,7 +17,6 @@ import {
     Moon,
     Sun
 } from 'lucide-react';
-import { useState } from 'react';
 
 const Layout = () => {
     const { user, logout } = useContext(AuthContext);
@@ -24,6 +24,12 @@ const Layout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
     const [currentTime, setCurrentTime] = useState(new Date());
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+    const [snowOn, setSnowOn] = useState(getChristmasSnowState);
+
+    const handleToggleSnow = () => {
+        const next = toggleChristmasSnow();
+        setSnowOn(next);
+    };
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
@@ -135,21 +141,37 @@ const Layout = () => {
                         zIndex: 0,
                         pointerEvents: 'none'
                     }} />
-                    <img 
-                        src="/logo.png" 
-                        alt="Fadna OMS" 
-                        style={{ 
-                            maxWidth: '140px', 
-                            height: 'auto', 
-                            marginBottom: '0.5rem',
-                            position: 'relative',
-                            zIndex: 1,
-                            filter: theme === 'dark' 
-                                ? 'drop-shadow(0 0 12px rgba(101, 189, 74, 0.4)) brightness(1.1)' 
-                                : 'drop-shadow(0 0 8px rgba(101, 189, 74, 0.2))',
-                            transition: 'all 0.5s ease'
-                        }} 
-                    />
+                    <div style={{ position: 'relative', display: 'inline-block' }}>
+                        {snowOn && (
+                            <div style={{
+                                position: 'absolute',
+                                top: '-14px',
+                                left: '8px',
+                                fontSize: '1.4rem',
+                                transform: 'rotate(-18deg)',
+                                zIndex: 3,
+                                userSelect: 'none',
+                                pointerEvents: 'none'
+                            }} title="Merry Christmas!">
+                                🎅
+                            </div>
+                        )}
+                        <img 
+                            src="/logo.png" 
+                            alt="Fadna OMS" 
+                            style={{ 
+                                maxWidth: '140px', 
+                                height: 'auto', 
+                                marginBottom: '0.5rem',
+                                position: 'relative',
+                                zIndex: 1,
+                                filter: theme === 'dark' 
+                                    ? 'drop-shadow(0 0 12px rgba(101, 189, 74, 0.4)) brightness(1.1)' 
+                                    : 'drop-shadow(0 0 8px rgba(101, 189, 74, 0.2))',
+                                transition: 'all 0.5s ease'
+                            }} 
+                        />
+                    </div>
                     <div style={{ textAlign: 'center', color: 'var(--text-dim)', fontSize: '0.75rem', lineHeight: '1.4', position: 'relative', zIndex: 1 }}>
                         <div>{formatDate(currentTime)}</div>
                         <div style={{ fontWeight: 'bold', color: 'var(--primary)', fontSize: '0.9rem' }}>{formatTime(currentTime)}</div>
@@ -234,7 +256,27 @@ const Layout = () => {
                         <Menu size={24} />
                     </button>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <button
+                            onClick={handleToggleSnow}
+                            style={{
+                                background: snowOn ? 'rgba(180, 220, 255, 0.15)' : 'transparent',
+                                border: snowOn ? '1px solid rgba(180, 220, 255, 0.35)' : '1px solid transparent',
+                                color: snowOn ? '#60a5fa' : 'var(--text-dim)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: '0.45rem',
+                                borderRadius: '50%',
+                                transition: 'all 0.2s',
+                                fontSize: '1.05rem',
+                                cursor: 'pointer'
+                            }}
+                            title={snowOn ? "Christmas Snow is ON (Click to turn off)" : "Christmas Snow is OFF (Click to turn on)"}
+                        >
+                            ❄️
+                        </button>
+
                         <button
                             onClick={toggleTheme}
                             style={{

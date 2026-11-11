@@ -14,7 +14,7 @@ const SantaSleigh = () => {
     }, []);
 
     // Periodic flight at constant uniform speed (faster pace)
-    const FLIGHT_DURATION = 25; // seconds across the screen (fast constant speed)
+    const FLIGHT_DURATION = 3.4; // seconds across the screen (fast constant speed)
     const REST_DURATION = 15;   // seconds break before next flight
 
     useEffect(() => {

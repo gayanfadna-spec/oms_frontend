@@ -13,7 +13,10 @@ const SantaSleigh = () => {
         return () => window.removeEventListener('christmas-snow-change', handleSnowChange);
     }, []);
 
-    // Periodic flight: flies across for ~14s, rests for ~12s, then flies again
+    // Periodic flight at constant uniform speed
+    const FLIGHT_DURATION = 16; // seconds across the screen
+    const REST_DURATION = 8;   // seconds break before next flight
+
     useEffect(() => {
         if (!active) return;
 
@@ -24,8 +27,8 @@ const SantaSleigh = () => {
                 setFlying(false);
                 timeoutId = setTimeout(() => {
                     triggerFlightCycle();
-                }, 10000); // 10s wait between flights
-            }, 16000); // 16s flight duration
+                }, REST_DURATION * 1000);
+            }, FLIGHT_DURATION * 1000);
         };
 
         triggerFlightCycle();
@@ -45,7 +48,7 @@ const SantaSleigh = () => {
                 zIndex: 99998,
                 pointerEvents: 'none',
                 userSelect: 'none',
-                animation: 'santaFlyAcross 15s cubic-bezier(0.25, 1, 0.5, 1) forwards'
+                animation: `santaFlyAcross ${FLIGHT_DURATION}s linear forwards`
             }}
         >
             <div style={{
@@ -267,3 +270,4 @@ const SantaSleigh = () => {
 };
 
 export default SantaSleigh;
+

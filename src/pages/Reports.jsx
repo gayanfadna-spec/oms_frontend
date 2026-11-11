@@ -115,8 +115,8 @@ const Reports = () => {
                 const dateStr = `${pad(createdAt.getDate())}/${pad(createdAt.getMonth() + 1)}/${createdAt.getFullYear()}`;
                 const timeStr = `${pad(createdAt.getHours())}:${pad(createdAt.getMinutes())}:${pad(createdAt.getSeconds())}`;
 
-                const isFreeIssue = Boolean(order.paymentStatus === 'Paid' && (order.isFreeIssue || order.freeIssue));
-                const isExchange = Boolean(order.paymentStatus === 'Paid' && (order.isExchange || order.exchange));
+                const isFreeIssue = Boolean(order.isFreeIssue || order.freeIssue);
+                const isExchange = Boolean(order.isExchange || order.exchange);
 
                 const row = [
                     `"${dateStr}"`,

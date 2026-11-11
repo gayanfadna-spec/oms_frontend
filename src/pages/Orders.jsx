@@ -370,7 +370,7 @@ const Orders = () => {
                                                 <CheckCircle size={12} /> Downloaded
                                             </div>
                                         )}
-                                        {(order.paymentStatus === 'Paid' && (order.isFreeIssue || order.isExchange)) && (
+                                        {(order.isFreeIssue || order.isExchange) && (
                                             <div style={{ display: 'flex', gap: '0.25rem', marginTop: '0.35rem', flexWrap: 'wrap' }}>
                                                 {order.isFreeIssue && (
                                                     <span style={{ fontSize: '0.65rem', padding: '0.1rem 0.4rem', borderRadius: '4px', background: 'rgba(96, 165, 250, 0.2)', color: '#60a5fa', fontWeight: 'bold' }}>
@@ -799,7 +799,7 @@ const Orders = () => {
                                         <CheckCircle size={12} /> Exported
                                     </span>
                                 )}
-                                {selectedOrder.paymentStatus === 'Paid' && selectedOrder.isFreeIssue && (
+                                {selectedOrder.isFreeIssue && (
                                     <span style={{
                                         padding: '0.35rem 0.75rem',
                                         borderRadius: '9999px',
@@ -811,7 +811,7 @@ const Orders = () => {
                                         Free Issue
                                     </span>
                                 )}
-                                {selectedOrder.paymentStatus === 'Paid' && selectedOrder.isExchange && (
+                                {selectedOrder.isExchange && (
                                     <span style={{
                                         padding: '0.35rem 0.75rem',
                                         borderRadius: '9999px',

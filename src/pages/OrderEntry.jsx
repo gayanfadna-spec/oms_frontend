@@ -207,14 +207,6 @@ const OrderEntry = () => {
         }
     };
 
-    const handlePaymentMethodChange = (newMethod) => {
-        setPaymentMethod(newMethod);
-        if (newMethod !== 'Paid') {
-            setIsFreeIssue(false);
-            setIsExchange(false);
-        }
-    };
-
     const handleSubmit = async () => {
         setLoading(true);
         setError('');
@@ -279,8 +271,8 @@ const OrderEntry = () => {
                 paymentStatus: paymentMethod, // Use selected payment method
                 remark, // Optional remark
                 additionalRemark, // Second optional remark
-                isFreeIssue: paymentMethod === 'Paid' ? Boolean(isFreeIssue) : false,
-                isExchange: paymentMethod === 'Paid' ? Boolean(isExchange) : false
+                isFreeIssue,
+                isExchange
             };
 
             if (id) {
@@ -497,7 +489,7 @@ const OrderEntry = () => {
                                         name="paymentMethod"
                                         value="COD"
                                         checked={paymentMethod === 'COD'}
-                                        onChange={(e) => handlePaymentMethodChange(e.target.value)}
+                                        onChange={(e) => setPaymentMethod(e.target.value)}
                                     />
                                     COD
                                 </label>
@@ -507,7 +499,7 @@ const OrderEntry = () => {
                                         name="paymentMethod"
                                         value="Paid"
                                         checked={paymentMethod === 'Paid'}
-                                        onChange={(e) => handlePaymentMethodChange(e.target.value)}
+                                        onChange={(e) => setPaymentMethod(e.target.value)}
                                     />
                                     Paid
                                 </label>
@@ -517,7 +509,7 @@ const OrderEntry = () => {
                                         name="paymentMethod"
                                         value="Export"
                                         checked={paymentMethod === 'Export'}
-                                        onChange={(e) => handlePaymentMethodChange(e.target.value)}
+                                        onChange={(e) => setPaymentMethod(e.target.value)}
                                     />
                                     Export
                                 </label>
@@ -527,67 +519,48 @@ const OrderEntry = () => {
                             </div>
                         </div>
 
-                        {paymentMethod === 'Paid' ? (
-                            <div className="input-group" style={{ marginTop: '1.25rem', marginBottom: '0.5rem' }}>
-                                <label className="input-label">Order Marks (Supported for Paid orders)</label>
-                                <div style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '2rem',
-                                    padding: '0.75rem 1rem',
-                                    background: 'var(--bg-dark)',
-                                    borderRadius: '0.5rem',
-                                    border: '1px solid var(--glass-border)',
-                                    flexWrap: 'wrap'
-                                }}>
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontWeight: 500, fontSize: '0.95rem' }}>
-                                        <input
-                                            type="checkbox"
-                                            checked={isFreeIssue}
-                                            onChange={(e) => setIsFreeIssue(e.target.checked)}
-                                            style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: 'var(--primary)' }}
-                                        />
-                                        <span>Free Issue</span>
-                                        {isFreeIssue && (
-                                            <span style={{ fontSize: '0.75rem', padding: '0.15rem 0.5rem', borderRadius: '9999px', background: 'rgba(96, 165, 250, 0.2)', color: '#60a5fa', fontWeight: 'bold' }}>
-                                                FREE ISSUE
-                                            </span>
-                                        )}
-                                    </label>
-                                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontWeight: 500, fontSize: '0.95rem' }}>
-                                        <input
-                                            type="checkbox"
-                                            checked={isExchange}
-                                            onChange={(e) => setIsExchange(e.target.checked)}
-                                            style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#f59e0b' }}
-                                        />
-                                        <span>Exchange</span>
-                                        {isExchange && (
-                                            <span style={{ fontSize: '0.75rem', padding: '0.15rem 0.5rem', borderRadius: '9999px', background: 'rgba(245, 158, 11, 0.2)', color: '#f59e0b', fontWeight: 'bold' }}>
-                                                EXCHANGE
-                                            </span>
-                                        )}
-                                    </label>
-                                </div>
-                            </div>
-                        ) : (
+                        <div className="input-group" style={{ marginTop: '1.25rem', marginBottom: '0.5rem' }}>
+                            <label className="input-label">Order Marks</label>
                             <div style={{
-                                marginTop: '1rem',
-                                marginBottom: '0.5rem',
-                                padding: '0.65rem 1rem',
-                                background: 'rgba(255, 255, 255, 0.03)',
-                                borderRadius: '0.5rem',
-                                border: '1px dashed var(--glass-border)',
-                                fontSize: '0.825rem',
-                                color: 'var(--text-dim)',
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '0.5rem'
+                                gap: '2rem',
+                                padding: '0.75rem 1rem',
+                                background: 'var(--bg-dark)',
+                                borderRadius: '0.5rem',
+                                border: '1px solid var(--glass-border)',
+                                flexWrap: 'wrap'
                             }}>
-                                <span>ℹ️</span>
-                                <span>Free Issue & Exchange marks are <strong>only supported for Paid orders</strong>. (Select "Paid" above to enable).</span>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontWeight: 500, fontSize: '0.95rem' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={isFreeIssue}
+                                        onChange={(e) => setIsFreeIssue(e.target.checked)}
+                                        style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: 'var(--primary)' }}
+                                    />
+                                    <span>Free Issue</span>
+                                    {isFreeIssue && (
+                                        <span style={{ fontSize: '0.75rem', padding: '0.15rem 0.5rem', borderRadius: '9999px', background: 'rgba(96, 165, 250, 0.2)', color: '#60a5fa', fontWeight: 'bold' }}>
+                                            FREE ISSUE
+                                        </span>
+                                    )}
+                                </label>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontWeight: 500, fontSize: '0.95rem' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={isExchange}
+                                        onChange={(e) => setIsExchange(e.target.checked)}
+                                        style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#f59e0b' }}
+                                    />
+                                    <span>Exchange</span>
+                                    {isExchange && (
+                                        <span style={{ fontSize: '0.75rem', padding: '0.15rem 0.5rem', borderRadius: '9999px', background: 'rgba(245, 158, 11, 0.2)', color: '#f59e0b', fontWeight: 'bold' }}>
+                                            EXCHANGE
+                                        </span>
+                                    )}
+                                </label>
                             </div>
-                        )}
+                        </div>
 
                         <div className="input-group" style={{ marginTop: '1rem' }}>
                             <label className="input-label">Remark (Any discounts or special instructions)</label>
